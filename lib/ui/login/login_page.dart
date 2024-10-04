@@ -55,115 +55,116 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Clinic Management', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
-        backgroundColor: Colors.lightBlueAccent,
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-      ),
-      body: BlocBuilder<LoginBloc, LoginState>(
-        builder: (context, loginState) {
-          if (loginState.isFailure) {
-            print('Login failed');
-          } else if (loginState.isSubmitting) {
-            print('Login in');
-          } else if (loginState.isSuccess) {
-            //thêm event authenticationEventLogin
-            BlocProvider.of<AuthenticationBloc>(context)
-                .add(AuthenticationEventLoggedIn());
-          }
-          return Stack(
-            children: [
-              Padding(
-                padding: EdgeInsets.all(20),
-                child: Form(
-                    child: ListView(
-                  children: [
-                    TextFormField(
-                      controller: _emailController,
-                      decoration: InputDecoration(
-                          icon: Icon(Icons.email),
-                          labelText: 'Enter your email'),
-                      keyboardType: TextInputType.emailAddress,
-                      autovalidateMode: AutovalidateMode.always,
-                      autocorrect: false,
-                      validator: (_) {
-                        return loginState.isValidEmail
-                            ? null
-                            : 'Invalid email format';
-                      },
-                    ),
-                    TextFormField(
-                      controller: _passwordController,
-                      decoration: InputDecoration(
-                          icon: Icon(Icons.lock), labelText: 'Enter password',
-                          suffixIcon: IconButton(
-                            icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility,
-                              color: Colors.black,),
-                            onPressed: (){
-                              setState(() {
-                                _obscurePassword = !_obscurePassword;
-                              });
-                            },
-                          )),
-                      obscureText: _obscurePassword,
-                      autovalidateMode: AutovalidateMode.always,
-                      autocorrect: false,
-                      validator: (_) {
-                        return loginState.isValidPassword
-                            ? null
-                            : 'Invalid password format';
-                      },
-                    ),
-                    SizedBox(height: 10),
-                    // Hiển thị thông báo lỗi nếu đăng nhập thất bại
-                    loginState.isFailure
-                        ? Text(
-                      '          Email or pasword invalid',
-                      style: TextStyle(
-                          color: Colors.red, fontSize: 14,),
-                      textAlign: TextAlign.left,
-                    )
-                        : Container(),
-                    // Nếu không có lỗi thì không hiển thị gì
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          LoginButton(
-                            onPressed: isLoginButtonEnabled(loginState)
-                                ? _onLoginEmailAndPassword : null,
-                          ),
-                          const Padding(padding: EdgeInsets.only(top: 20)),
-                          const Divider(height: 1, color: Colors.grey),
-                          Row(
-                            children: [
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: TextButton(
-                                    child: const Text('Forgot your password?',
-                                      style: TextStyle(fontSize: 14, color: Colors.black),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                    onPressed: (){}
-                                ),
-                              ),
-                              //Thêm nút để đăng kí tài khoản
-                              const Spacer(),
-                              RegisterUserButton(userRepository: _userRepository)
-                            ],
-                          ),
-                        ],
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Clinic Management', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
+          backgroundColor: Colors.lightBlueAccent,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
+        ),
+        body: BlocBuilder<LoginBloc, LoginState>(
+          builder: (context, loginState) {
+            if (loginState.isFailure) {
+              print('Login failed');
+            } else if (loginState.isSubmitting) {
+              print('Login in');
+            } else if (loginState.isSuccess) {
+              //thêm event authenticationEventLogin
+              BlocProvider.of<AuthenticationBloc>(context)
+                  .add(AuthenticationEventLoggedIn());
+            }
+            return Stack(
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Form(
+                      child: ListView(
+                    children: [
+                      TextFormField(
+                        controller: _emailController,
+                        decoration: InputDecoration(
+                            icon: Icon(Icons.email),
+                            labelText: 'Enter your email'),
+                        keyboardType: TextInputType.emailAddress,
+                        autovalidateMode: AutovalidateMode.always,
+                        autocorrect: false,
+                        validator: (_) {
+                          return loginState.isValidEmail
+                              ? null
+                              : 'Invalid email format';
+                        },
                       ),
-                    ),
-                  ],
-                )),
-              ),
-            ],
-          );
-        },
+                      TextFormField(
+                        controller: _passwordController,
+                        decoration: InputDecoration(
+                            icon: Icon(Icons.lock), labelText: 'Enter password',
+                            suffixIcon: IconButton(
+                              icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility,
+                                color: Colors.black,),
+                              onPressed: (){
+                                setState(() {
+                                  _obscurePassword = !_obscurePassword;
+                                });
+                              },
+                            )),
+                        obscureText: _obscurePassword,//che mật khẩu
+                        autovalidateMode: AutovalidateMode.always,//tự động validate password mà k cần gọi
+                        autocorrect: false,//tắt tự sửa lỗi của hệ thống
+                        validator: (_) {
+                          return loginState.isValidPassword
+                              ? null
+                              : 'Invalid password format';
+                        },
+                      ),
+                      SizedBox(height: 10),
+                      // Hiển thị thông báo lỗi nếu đăng nhập thất bại
+                      loginState.isFailure
+                          ? Text(
+                        '          Email or pasword invalid',
+                        style: TextStyle(
+                            color: Colors.red, fontSize: 14,),
+                        textAlign: TextAlign.left,
+                      )
+                          : Container(),
+                      // Nếu không có lỗi thì không hiển thị gì
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            LoginButton(
+                              onPressed: isLoginButtonEnabled(loginState)
+                                  ? _onLoginEmailAndPassword : null,
+                            ),
+                            const Padding(padding: EdgeInsets.only(top: 20)),
+                            const Divider(height: 1, color: Colors.grey),
+                            Row(
+                              children: [
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: TextButton(
+                                      child: const Text('Forgot your password?',
+                                        style: TextStyle(fontSize: 14, color: Colors.black),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                      onPressed: (){}
+                                  ),
+                                ),
+                                //Thêm nút để đăng kí tài khoản
+                                const Spacer(),
+                                RegisterUserButton(userRepository: _userRepository)
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  )),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

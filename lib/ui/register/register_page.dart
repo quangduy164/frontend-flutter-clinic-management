@@ -21,7 +21,10 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage>{
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  String? _selectedGender; //biến chọn giới tính
   late RegisterBloc _registerBloc;
+
   UserRepository get _userRepository => widget._userRepository;
 
   @override
@@ -46,90 +49,124 @@ class _RegisterPageState extends State<RegisterPage>{
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Register'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.exit_to_app),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      ),
-      body: BlocBuilder<RegisterBloc, RegisterState>(
-        builder: (context, registerState){
-          if(registerState.isFailure){
-            print('Register failed');
-          }
-          else if(registerState.isSubmitting){
-            print('Register in progress');
-          }
-          else if(registerState.isSuccess){
-            //thêm event authenticationEventLogin
-            BlocProvider.of<AuthenticationBloc>(context).add(AuthenticationEventLoggedIn());
-          }
-          return Padding(
-            padding: EdgeInsets.all(20),
-            child: Form(
-                child: ListView(
-                  children: [
-                    TextFormField(
-                      controller: _emailController,
-                      decoration: InputDecoration(
-                          icon: Icon(Icons.email),
-                          labelText: 'Email'
-                      ),
-                      keyboardType: TextInputType.emailAddress,
-                      autovalidateMode: AutovalidateMode.always,
-                      autocorrect: false,
-                      validator: (_){
-                        return registerState.isValidEmail ? null : 'Invalid email format';
-                      },
-                    ),
-                    TextFormField(
-                      controller: _passwordController,
-                      decoration: InputDecoration(
-                          icon: Icon(Icons.lock),
-                          labelText: 'Password'
-                      ),
-                      obscureText: true,
-                      autovalidateMode: AutovalidateMode.always,
-                      autocorrect: false,
-                      validator: (_){
-                        return registerState.isValidPassword ? null : 'Invalid password format';
-                      },
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 20),
-                      child: SizedBox(
-                        height: 45,
-                        child: ElevatedButton(
-                            child: Text(
-                              'Register',
-                              style: TextStyle(fontSize: 16, color: Colors.white),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
-                              shape: BeveledRectangleBorder(
-                                borderRadius: BorderRadius.circular(13),
-                              ),
-                            ),
-                            onPressed: (){
-                              isRegisterButtonEnabled(registerState) ?
-                              _onRegisterEmailAndPassword : null;
-                              Navigator.of(context).pop();
-                            }
-                        ),
-                      )
-                    )
-                  ],
-                )
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Register'),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.exit_to_app),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
             ),
-          );
-        },
+          ],
+        ),
+        body: BlocBuilder<RegisterBloc, RegisterState>(
+          builder: (context, registerState){
+            if(registerState.isFailure){
+              print('Register failed');
+            }
+            else if(registerState.isSubmitting){
+              print('Register in progress');
+            }
+            else if(registerState.isSuccess){
+              //thêm event authenticationEventLogin
+              BlocProvider.of<AuthenticationBloc>(context).add(AuthenticationEventLoggedIn());
+            }
+            return Padding(
+              padding: EdgeInsets.all(20),
+              child: Form(
+                  child: ListView(
+                    children: [
+                      TextFormField(
+                        controller: _emailController,
+                        decoration: InputDecoration(
+                            icon: Icon(Icons.email),
+                            labelText: 'Email'
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        autovalidateMode: AutovalidateMode.always,
+                        autocorrect: false,
+                        validator: (_){
+                          return registerState.isValidEmail ? null : 'Invalid email format';
+                        },
+                      ),
+                      TextFormField(
+                        controller: _passwordController,
+                        decoration: InputDecoration(
+                            icon: Icon(Icons.lock),
+                            labelText: 'Password'
+                        ),
+                        obscureText: true,
+                        autovalidateMode: AutovalidateMode.always,
+                        autocorrect: false,
+                        validator: (_){
+                          return registerState.isValidPassword ? null : 'Invalid password format';
+                        },
+                      ),
+                      TextFormField(
+                        controller: _firstNameController,
+                        decoration: InputDecoration(
+                            icon: Icon(Icons.drive_file_rename_outline),
+                            labelText: 'First Name'
+                        ),
+                        autocorrect: false,
+                      ),
+                      DropdownButtonFormField<String>(
+                        decoration: InputDecoration(
+                          icon: Icon(Icons.person),
+                          labelText: 'Gender',
+                        ),
+                        value: _selectedGender,
+                        items: [
+                          DropdownMenuItem(
+                            value: 'Male',
+                            child: Text('Male'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'Female',
+                            child: Text('Female'),
+                          ),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedGender = value; // Cập nhật giới tính được chọn
+                          });
+                        },
+                        validator: (value) {
+                          return value == null ? 'Please select a gender' : null;
+                        },
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20),
+                        child: SizedBox(
+                          height: 45,
+                          child: ElevatedButton(
+                              child: Text(
+                                'Register',
+                                style: TextStyle(fontSize: 16, color: Colors.white),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                shape: BeveledRectangleBorder(
+                                  borderRadius: BorderRadius.circular(13),
+                                ),
+                              ),
+                              onPressed: (){
+                                isRegisterButtonEnabled(registerState) ?
+                                _onRegisterEmailAndPassword : null;
+                                Navigator.of(context).pop();
+                              }
+                          ),
+                        )
+                      )
+                    ],
+                  )
+              ),
+            );
+          },
+        ),
       ),
     );
   }

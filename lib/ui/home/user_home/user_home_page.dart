@@ -23,23 +23,25 @@ class _UserHomePageState extends State<UserHomePage>{
   ];
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('Clinic Management'),
-      ),
-      child: CupertinoTabScaffold(
-        tabBar: CupertinoTabBar(
-          backgroundColor: Theme.of(context).colorScheme.onInverseSurface,
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-            BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'Notification'),
-            BottomNavigationBarItem(icon: Icon(Icons.schedule), label: 'Schedule'),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Account'),
-          ],
+    return SafeArea(
+      child: CupertinoPageScaffold(
+        navigationBar: const CupertinoNavigationBar(
+          middle: Text('Clinic Management'),
         ),
-        tabBuilder: (BuildContext context, int index){
-          return _tabs[index];
-        },
+        child: CupertinoTabScaffold(
+          tabBar: CupertinoTabBar(
+            backgroundColor: Theme.of(context).colorScheme.onInverseSurface,
+            items: const [
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+              BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'Notification'),
+              BottomNavigationBarItem(icon: Icon(Icons.schedule), label: 'Schedule'),
+              BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Account'),
+            ],
+          ),
+          tabBuilder: (BuildContext context, int index){
+            return _tabs[index];
+          },
+        ),
       ),
     );
   }

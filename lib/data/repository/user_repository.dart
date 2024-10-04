@@ -31,9 +31,10 @@ class UserRepository {
   }
 
   // Tạo tài khoản mới với email và mật khẩu thông qua API Express
-  Future<Map<String, dynamic>> createUserWithEmailAndPassword(String email, String password) async {
+  Future<Map<String, dynamic>> createUserWithEmailAndPassword(
+      String email, String password) async {
     final response = await http.post(
-      Uri.parse('$apiUrl/register'),
+      Uri.parse('$apiUrl/create-new-user'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -63,6 +64,28 @@ class UserRepository {
       return jsonDecode(response.body); //Trả về thông tin người dùng và vai trò dạng object
     } else {//token k hợp lệ hoặc hết hạn
       return null;
+    }
+  }
+
+  //lấy thông tin người dùng từ API
+  Future<List<Map<String, dynamic>>> getAllUsers(String userId) async {
+    final response = await http.get(
+      Uri.parse('$apiUrl/get-all-users?id=${userId}'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseBody = jsonDecode(response.body);//chuyển phản hồi JSON thành Map
+      if (responseBody['errCode'] == 0) {
+        List<dynamic> users = responseBody['user'];//lấy danh sách user
+        return List<Map<String, dynamic>>.from(users);//chuyển danh sách user thành list các object
+      } else {
+        throw Exception('Failed to fetch users: ${responseBody['message']}');
+      }
+    } else {
+      throw Exception('Failed to fetch users');
     }
   }
 
