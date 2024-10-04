@@ -50,7 +50,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     emit(RegisterState.loading());
     try {
       await _userRepository.createUserWithEmailAndPassword(
-          event.email, event.password);
+          event.email, event.password, event.firstName, event.gender);
       emit(RegisterState.success());
     } catch (error) {
       emit(RegisterState.failure());

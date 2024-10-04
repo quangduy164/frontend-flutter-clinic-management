@@ -46,9 +46,15 @@ class RegisterEventWithGoogleChanged extends RegisterEvent {}
 class RegisterEventWithEmailAndPasswordPressed extends RegisterEvent {
   final String email;
   final String password;
+  final String firstName;
+  final int gender;
 
-  const RegisterEventWithEmailAndPasswordPressed(
-      {required this.email, required this.password});
+  const RegisterEventWithEmailAndPasswordPressed({
+    required this.email,
+    required this.password,
+    required this.firstName,
+    required this.gender
+  });
 
   @override
   // TODO: implement props

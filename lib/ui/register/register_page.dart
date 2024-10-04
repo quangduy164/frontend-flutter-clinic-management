@@ -155,7 +155,7 @@ class _RegisterPageState extends State<RegisterPage>{
                               ),
                               onPressed: (){
                                 isRegisterButtonEnabled(registerState) ?
-                                _onRegisterEmailAndPassword : null;
+                                _onRegisterEmailAndPassword() : null;
                                 Navigator.of(context).pop();
                               }
                           ),
@@ -171,9 +171,12 @@ class _RegisterPageState extends State<RegisterPage>{
     );
   }
 
-  void _onRegisterEmailAndPassword(){
+  void _onRegisterEmailAndPassword() {
     _registerBloc.add(RegisterEventWithEmailAndPasswordPressed(
         email: _emailController.text,
-        password: _passwordController.text));
+        password: _passwordController.text,
+        firstName: _firstNameController.text,
+        gender: _selectedGender == 'Male' ? 1 : 0
+    ));
   }
 }

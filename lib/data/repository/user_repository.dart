@@ -15,7 +15,7 @@ class UserRepository {
         'Content-Type': 'application/json; charset=UTF-8',//dữ liệu gửi đi là JSON.
       },
       body: jsonEncode(<String, String>{//req dạng JSON
-        'email': email.trim(),
+        'email': email.trim(),//trim() để loại bỏ khoảng trắng
         'password': password.trim(),
       }),
     );
@@ -32,15 +32,20 @@ class UserRepository {
 
   // Tạo tài khoản mới với email và mật khẩu thông qua API Express
   Future<Map<String, dynamic>> createUserWithEmailAndPassword(
-      String email, String password) async {
+      String email, String password, String firstName, int gender) async {
     final response = await http.post(
       Uri.parse('$apiUrl/create-new-user'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(<String, String>{
+      body: jsonEncode(<String, dynamic>{
         'email': email.trim(),
         'password': password.trim(),
+        'firstName': firstName.trim(),
+        'lastName': 'Nguyen'.trim(),
+        'address': 'VietNam'.trim(),
+        'gender': gender,
+        'roleId': 3
       }),
     );
 
