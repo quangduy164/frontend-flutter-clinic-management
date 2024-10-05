@@ -68,6 +68,31 @@ class UserRepository {
     }
   }
 
+  //xóa người dùng qua API Express
+  Future<Map<String, dynamic>> deleteUser(int userId) async {
+    final response = await http.delete(
+      Uri.parse('$apiUrl/delete-user'), // Đường dẫn API cho việc xóa
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, int>{
+        'id': userId, // Tham số id của người dùng cần xóa
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      // Xử lý phản hồi từ API
+      final Map<String, dynamic> responseBody = jsonDecode(response.body);
+      if (responseBody['errCode'] == 0) {
+        return {'success': true, 'message': responseBody['errMessage']};
+      } else {
+        return {'success': false, 'message': responseBody['errMessage']};
+      }
+    } else {
+      throw Exception('Failed to delete user');
+    }
+  }
+
   // Lấy thông tin người dùng từ accessToken
   Future<Map<String, dynamic>?> getUserFromToken(String accessToken) async {
     final response = await http.get(

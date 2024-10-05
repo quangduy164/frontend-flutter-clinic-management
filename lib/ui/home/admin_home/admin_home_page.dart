@@ -120,6 +120,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
   Widget _buildUserTable(List<Map<String, dynamic>> users) {
     return SizedBox(
       height: 450,
+      width: 335,
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,//cuộn theo chiều dọc
         child: Padding(
@@ -146,8 +147,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                       IconButton(
                         icon: Icon(Icons.delete, color: Colors.red),
                         onPressed: () {
-                          // Xử lý xóa
-                          print('Delete ${user['email']}');
+                          _confirmDelete(user['id'], user['email']);
                         },
                       ),
                     ],
@@ -160,13 +160,62 @@ class _AdminHomePageState extends State<AdminHomePage> {
               verticalInside: BorderSide(color: Colors.grey), // Đường kẻ dọc giữa các cột
               top: BorderSide(color: Colors.grey, width: 1), // Đường kẻ trên
               bottom: BorderSide(color: Colors.grey, width: 1), // Đường kẻ dưới
-              left: BorderSide(color: Colors.grey, width: 1), // Đường kẻ bên trái
-              right: BorderSide(color: Colors.grey, width: 1), // Đường kẻ bên phải
             ),
           ),
         ),
       ),
     );
+  }
+
+  // Hộp thoại xác nhận xóa
+  Future<void> _confirmDelete(int userId, String email) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: Text('Bạn chắc chắn muốn xóa email $email ?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: Text('Trở về'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: Text('Xóa', style: TextStyle(color: Colors.red),),
+            ),
+          ],
+        );
+      },
+    );
+    if (confirm == true) {
+      await _deleteUser(userId);
+    }
+  }
+
+  // Hàm xóa người dùng
+  Future<void> _deleteUser(int userId) async {
+    try {
+      final result = await _userRepository.deleteUser(userId);
+      if (result['success']) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Xóa người dùng thành công')),
+        );
+        // Cập nhật lại danh sách người dùng sau khi xóa
+        await _refreshListUsers();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${result['message']}')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
   }
 
   // Làm mới danh sách bài hát
