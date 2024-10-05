@@ -118,36 +118,54 @@ class _AdminHomePageState extends State<AdminHomePage> {
   }
 
   Widget _buildUserTable(List<Map<String, dynamic>> users) {
-    return DataTable(
-      columns: const [
-        DataColumn(label: Text('Email')),
-        DataColumn(label: Text('Action')),
-      ],
-      rows: users.map((user) {
-        return DataRow(cells: [
-          DataCell(Text(user['email'])),
-          DataCell(
-            Row(
-              children: [
-                IconButton(
-                  icon: Icon(Icons.edit, color: Colors.blue),
-                  onPressed: () {
-                    // Xử lý chỉnh sửa
-                    print('Edit ${user['email']}');
-                  },
+    return SizedBox(
+      height: 450,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,//cuộn theo chiều dọc
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: DataTable(
+            columns: const [
+              DataColumn(label: Text('Email')),
+              DataColumn(label: Text('Action')),
+            ],
+            rows: users.map((user) {
+              return DataRow(cells: [
+                DataCell(Text(user['email'])),
+                DataCell(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.edit, color: Colors.blue),
+                        onPressed: () {
+                          // Xử lý chỉnh sửa
+                          print('Edit ${user['email']}');
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete, color: Colors.red),
+                        onPressed: () {
+                          // Xử lý xóa
+                          print('Delete ${user['email']}');
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-                IconButton(
-                  icon: Icon(Icons.delete, color: Colors.red),
-                  onPressed: () {
-                    // Xử lý xóa
-                    print('Delete ${user['email']}');
-                  },
-                ),
-              ],
+              ]);
+            }).toList(),
+            border: const TableBorder(
+              horizontalInside: BorderSide(color: Colors.grey), // Đường kẻ ngang giữa các hàng
+              verticalInside: BorderSide(color: Colors.grey), // Đường kẻ dọc giữa các cột
+              top: BorderSide(color: Colors.grey, width: 1), // Đường kẻ trên
+              bottom: BorderSide(color: Colors.grey, width: 1), // Đường kẻ dưới
+              left: BorderSide(color: Colors.grey, width: 1), // Đường kẻ bên trái
+              right: BorderSide(color: Colors.grey, width: 1), // Đường kẻ bên phải
             ),
           ),
-        ]);
-      }).toList(),
+        ),
+      ),
     );
   }
 

@@ -7,16 +7,19 @@ class RegisterState {
   final bool isSubmitting;
   final bool isSuccess;
   final bool isFailure;
+  final String? errMessage;//thêm thuộc tính thông báo lỗi
 
   bool get isValidEmailAndPassword => isValidEmail && isValidPassword;
 
   //Contructor
-  RegisterState(
-      {required this.isValidEmail,
-      required this.isValidPassword,
-      required this.isSubmitting,
-      required this.isSuccess,
-      required this.isFailure});
+  RegisterState({
+    required this.isValidEmail,
+    required this.isValidPassword,
+    required this.isSubmitting,
+    required this.isSuccess,
+    required this.isFailure,
+    this.errMessage
+  });
 
   //Với mỗi đối tượng có thể tạo ra bởi phương thức static hoặc factory
   factory RegisterState.initial() {
@@ -25,7 +28,9 @@ class RegisterState {
         isValidPassword: true,
         isSubmitting: false,
         isSuccess: false,
-        isFailure: false);
+        isFailure: false,
+        errMessage: null
+    );
   }
 
   //Trạng thái loading
@@ -35,7 +40,9 @@ class RegisterState {
         isValidPassword: true,
         isSubmitting: true,
         isSuccess: false,
-        isFailure: false);
+        isFailure: false,
+        errMessage: null
+    );
   }
 
   factory RegisterState.success() {
@@ -44,16 +51,20 @@ class RegisterState {
         isValidPassword: true,
         isSubmitting: false,
         isSuccess: true,
-        isFailure: false);
+        isFailure: false,
+        errMessage: null
+    );
   }
 
-  factory RegisterState.failure() {
+  factory RegisterState.failure(String errMessage) {
     return RegisterState(
         isValidEmail: true,
         isValidPassword: true,
         isSubmitting: false,
         isSuccess: false,
-        isFailure: true);
+        isFailure: true,
+        errMessage: errMessage
+    );
   }
 
   //Nhân bản trạng thái
@@ -69,7 +80,9 @@ class RegisterState {
         isValidPassword: isValidPassword ?? this.isValidPassword,
         isSubmitting: isSubmitting ?? this.isSubmitting,
         isSuccess: isSuccess ?? this.isSuccess,
-        isFailure: isFailure ?? this.isFailure);
+        isFailure: isFailure ?? this.isFailure,
+        errMessage: errMessage ?? this.errMessage
+    );
   }
 
   //Nhân bản đối tượng và cập nhật đối tượng

@@ -5,6 +5,7 @@ import 'package:clinic_management/data/events/register_event.dart';
 import 'package:clinic_management/data/repository/user_repository.dart';
 import 'package:clinic_management/data/states/register_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 
@@ -25,11 +26,10 @@ class _RegisterPageState extends State<RegisterPage>{
   String? _selectedGender; //biến chọn giới tính
   late RegisterBloc _registerBloc;
 
-  UserRepository get _userRepository => widget._userRepository;
+  final UserRepository _userRepository = UserRepository();
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _registerBloc = BlocProvider.of<RegisterBloc>(context);
     //Khi thay đổi email hàm  này đc gọi
@@ -64,13 +64,26 @@ class _RegisterPageState extends State<RegisterPage>{
         ),
         body: BlocBuilder<RegisterBloc, RegisterState>(
           builder: (context, registerState){
-            if(registerState.isFailure){
+            if(registerState.isFailure && registerState.errMessage != null){
+              Navigator.of(context).pop();
+              //Scheduler đảm bảo xây dựng xong ui mới hiện scaffoldMessage
+              SchedulerBinding.instance.addPostFrameCallback((_) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Lỗi: ${registerState.errMessage}')),
+                );
+              });
               print('Register failed');
             }
             else if(registerState.isSubmitting){
               print('Register in progress');
             }
             else if(registerState.isSuccess){
+              SchedulerBinding.instance.addPostFrameCallback((_){
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Đăng ký thành công!')),
+                );
+              });
               //thêm event authenticationEventLogin
               BlocProvider.of<AuthenticationBloc>(context).add(AuthenticationEventLoggedIn());
             }
@@ -156,7 +169,6 @@ class _RegisterPageState extends State<RegisterPage>{
                               onPressed: (){
                                 isRegisterButtonEnabled(registerState) ?
                                 _onRegisterEmailAndPassword() : null;
-                                Navigator.of(context).pop();
                               }
                           ),
                         )
@@ -178,5 +190,6 @@ class _RegisterPageState extends State<RegisterPage>{
         firstName: _firstNameController.text,
         gender: _selectedGender == 'Male' ? 1 : 0
     ));
+
   }
 }

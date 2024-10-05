@@ -39,7 +39,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       //await _userRepository.signInWithGoogle();
       emit(RegisterState.success());
     } catch (error) {
-      emit(RegisterState.failure());
+      emit(RegisterState.failure(error.toString()));
     }
   }
 
@@ -53,7 +53,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
           event.email, event.password, event.firstName, event.gender);
       emit(RegisterState.success());
     } catch (error) {
-      emit(RegisterState.failure());
+      emit(RegisterState.failure(error.toString()));
     }
   }
 }

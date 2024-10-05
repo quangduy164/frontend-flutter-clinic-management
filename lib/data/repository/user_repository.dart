@@ -8,14 +8,18 @@ class UserRepository {
   final String apiUrl = 'http://192.168.1.31:8080/api'; //URL api
 
   // Đăng nhập với email và mật khẩu thông qua API Express
-  Future<Map<String, dynamic>> signInWithEmailAndPassword(String email, String password) async {
+  Future<Map<String, dynamic>> signInWithEmailAndPassword(
+      String email, String password) async {
     final response = await http.post(
       Uri.parse('$apiUrl/login'),
-      headers: <String, String>{  //Tiêu đề HTTP chứa thông tin về kiểu dữ liệu trong yêu cầu.
-        'Content-Type': 'application/json; charset=UTF-8',//dữ liệu gửi đi là JSON.
+      headers: <String, String>{
+        //Tiêu đề HTTP chứa thông tin về kiểu dữ liệu trong yêu cầu.
+        'Content-Type': 'application/json; charset=UTF-8',
+        //dữ liệu gửi đi là JSON.
       },
-      body: jsonEncode(<String, String>{//req dạng JSON
-        'email': email.trim(),//trim() để loại bỏ khoảng trắng
+      body: jsonEncode(<String, String>{
+        //req dạng JSON
+        'email': email.trim(), //trim() để loại bỏ khoảng trắng
         'password': password.trim(),
       }),
     );
@@ -24,7 +28,8 @@ class UserRepository {
       // Xử lý phản hồi từ API
       //Lưu thông tin người dùng vào bộ nhớ cục bộ SharedPreferences
       await saveAccessToken(jsonDecode(response.body)['accessToken']);
-      return jsonDecode(response.body);//chuyển chuỗi JSON thành Map<String, dynamic> (dạng object Dart)
+      return jsonDecode(response
+          .body); //chuyển chuỗi JSON thành Map<String, dynamic> (dạng object Dart)
     } else {
       throw Exception('Failed to log in');
     }
@@ -51,7 +56,13 @@ class UserRepository {
 
     if (response.statusCode == 200) {
       // Xử lý phản hồi từ API
-      return jsonDecode(response.body);
+      final Map<String, dynamic> responseBody =
+          jsonDecode(response.body); //chuyển phản hồi JSON thành Map
+      if (responseBody['errCode'] == 0) {
+        return responseBody['message'];
+      } else {
+        throw Exception('Failed to register user: ${responseBody['message']}');
+      }
     } else {
       throw Exception('Failed to create account');
     }
@@ -66,8 +77,10 @@ class UserRepository {
       },
     );
     if (response.statusCode == 200) {
-      return jsonDecode(response.body); //Trả về thông tin người dùng và vai trò dạng object
-    } else {//token k hợp lệ hoặc hết hạn
+      return jsonDecode(
+          response.body); //Trả về thông tin người dùng và vai trò dạng object
+    } else {
+      //token k hợp lệ hoặc hết hạn
       return null;
     }
   }
@@ -82,10 +95,12 @@ class UserRepository {
     );
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> responseBody = jsonDecode(response.body);//chuyển phản hồi JSON thành Map
+      final Map<String, dynamic> responseBody =
+          jsonDecode(response.body); //chuyển phản hồi JSON thành Map
       if (responseBody['errCode'] == 0) {
-        List<dynamic> users = responseBody['user'];//lấy danh sách user
-        return List<Map<String, dynamic>>.from(users);//chuyển danh sách user thành list các object
+        List<dynamic> users = responseBody['user']; //lấy danh sách user
+        return List<Map<String, dynamic>>.from(
+            users); //chuyển danh sách user thành list các object
       } else {
         throw Exception('Failed to fetch users: ${responseBody['message']}');
       }
@@ -98,7 +113,8 @@ class UserRepository {
   Future<bool> isSignIn() async {
     final accessToken = await getAccessToken();
     if (accessToken != null) {
-      final user = await getUserFromToken(accessToken);//kiểm tra thông tin có hợp lệ k
+      final user =
+          await getUserFromToken(accessToken); //kiểm tra thông tin có hợp lệ k
       return user != null;
     }
     return false;
@@ -107,7 +123,7 @@ class UserRepository {
   //Đăng xuất
   Future<void> signOut() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('accessToken');//xóa accessToken
+    await prefs.remove('accessToken'); //xóa accessToken
   }
 
   // Lưu accessToken sau khi đăng nhập thành công
@@ -121,5 +137,4 @@ class UserRepository {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('accessToken');
   }
-
 }
