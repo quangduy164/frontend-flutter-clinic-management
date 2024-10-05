@@ -68,10 +68,39 @@ class UserRepository {
     }
   }
 
+  //cập nhật thông tin người dùng
+  Future<Map<String, dynamic>> updateUser(int id, String firstName, String lastName, String address) async {
+    final response = await http.put(
+      Uri.parse('$apiUrl/edit-user'), // Đường dẫn API update
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'id': id,
+        'firstName': firstName.trim(),
+        'lastName': lastName.trim(),
+        'address': address.trim(),
+      }),
+    );
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseBody = jsonDecode(response.body);
+      print('--------------------------------------------------------------------------------------');
+      print(responseBody);
+      print(responseBody['errCode']);
+      if (responseBody['errCode'] == 0) {
+        return {'success': true, 'message': responseBody['message']};
+      } else {
+        return {'success': false, 'message': responseBody['errMessage']};
+      }
+    } else {
+      throw Exception('Failed to update user');
+    }
+  }
+
   //xóa người dùng qua API Express
   Future<Map<String, dynamic>> deleteUser(int userId) async {
     final response = await http.delete(
-      Uri.parse('$apiUrl/delete-user'), // Đường dẫn API cho việc xóa
+      Uri.parse('$apiUrl/delete-user'), // Đường dẫn API xóa
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -84,7 +113,7 @@ class UserRepository {
       // Xử lý phản hồi từ API
       final Map<String, dynamic> responseBody = jsonDecode(response.body);
       if (responseBody['errCode'] == 0) {
-        return {'success': true, 'message': responseBody['errMessage']};
+        return {'success': true, 'message': responseBody['message']};
       } else {
         return {'success': false, 'message': responseBody['errMessage']};
       }

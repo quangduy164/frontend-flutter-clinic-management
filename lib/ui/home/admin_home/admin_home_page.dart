@@ -1,6 +1,7 @@
 import 'package:clinic_management/data/blocs/authentication_bloc.dart';
 import 'package:clinic_management/data/events/authentication_event.dart';
 import 'package:clinic_management/data/repository/user_repository.dart';
+import 'package:clinic_management/ui/home/admin_home/edit_user_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -104,7 +105,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
           future: futureGetAllUsers,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: Center(child: CircularProgressIndicator()));
             } else if (snapshot.hasError) {
               return Text('Lỗi: ${snapshot.error}');
             } else {
@@ -139,9 +140,12 @@ class _AdminHomePageState extends State<AdminHomePage> {
                     children: [
                       IconButton(
                         icon: Icon(Icons.edit, color: Colors.blue),
-                        onPressed: () {
-                          // Xử lý chỉnh sửa
-                          print('Edit ${user['email']}');
+                        onPressed: () async {
+                          await Navigator.push(
+                              context, MaterialPageRoute(
+                              builder: (context) => EditUserPage(user: user)
+                          ));
+                          await _refreshListUsers();
                         },
                       ),
                       IconButton(
@@ -218,7 +222,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
     }
   }
 
-  // Làm mới danh sách bài hát
+  // Làm mới danh sách user
   Future<void> _refreshListUsers() async {
     setState(() {
       futureGetAllUsers = _userRepository.getAllUsers('ALL'); // Cập nhật lại future
