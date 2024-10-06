@@ -7,6 +7,7 @@ class RegisterState {
   final bool isSubmitting;
   final bool isSuccess;
   final bool isFailure;
+  final String? successMessage;//thêm thuộc tính thông báo thành công
   final String? errMessage;//thêm thuộc tính thông báo lỗi
 
   bool get isValidEmailAndPassword => isValidEmail && isValidPassword;
@@ -18,6 +19,7 @@ class RegisterState {
     required this.isSubmitting,
     required this.isSuccess,
     required this.isFailure,
+    this.successMessage,
     this.errMessage
   });
 
@@ -29,6 +31,7 @@ class RegisterState {
         isSubmitting: false,
         isSuccess: false,
         isFailure: false,
+        successMessage: null,
         errMessage: null
     );
   }
@@ -41,17 +44,19 @@ class RegisterState {
         isSubmitting: true,
         isSuccess: false,
         isFailure: false,
+        successMessage: null,
         errMessage: null
     );
   }
 
-  factory RegisterState.success() {
+  factory RegisterState.success(String successMessage) {
     return RegisterState(
         isValidEmail: true,
         isValidPassword: true,
         isSubmitting: false,
         isSuccess: true,
         isFailure: false,
+        successMessage: successMessage,
         errMessage: null
     );
   }
@@ -63,17 +68,21 @@ class RegisterState {
         isSubmitting: false,
         isSuccess: false,
         isFailure: true,
+        successMessage: null,
         errMessage: errMessage
     );
   }
 
   //Nhân bản trạng thái
-  RegisterState cloneWith(
-      {bool? isValidEmail,
-      bool? isValidPassword,
-      bool? isSubmitting,
-      bool? isSuccess,
-      bool? isFailure}) {
+  RegisterState cloneWith({
+    bool? isValidEmail,
+    bool? isValidPassword,
+    bool? isSubmitting,
+    bool? isSuccess,
+    bool? isFailure,
+    String? successMessage,
+    String? errMessage,
+  }) {
     return RegisterState(
         isValidEmail: isValidEmail ?? this.isValidEmail,
         //Nếu isValidEmail đưa vào ==null thì lấy giá trị cũ
@@ -81,6 +90,7 @@ class RegisterState {
         isSubmitting: isSubmitting ?? this.isSubmitting,
         isSuccess: isSuccess ?? this.isSuccess,
         isFailure: isFailure ?? this.isFailure,
+        successMessage: successMessage ?? this.successMessage,
         errMessage: errMessage ?? this.errMessage
     );
   }

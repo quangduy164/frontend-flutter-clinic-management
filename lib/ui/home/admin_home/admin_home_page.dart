@@ -105,7 +105,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
           future: futureGetAllUsers,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: Center(child: CircularProgressIndicator()));
+              return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
               return Text('Lỗi: ${snapshot.error}');
             } else {
@@ -120,8 +120,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
 
   Widget _buildUserTable(List<Map<String, dynamic>> users) {
     return SizedBox(
-      height: 450,
-      width: 335,
+      height: 350,
+      width: 330,
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,//cuộn theo chiều dọc
         child: Padding(

@@ -56,12 +56,15 @@ class UserRepository {
 
     if (response.statusCode == 200) {
       // Xử lý phản hồi từ API
-      final Map<String, dynamic> responseBody =
-          jsonDecode(response.body); //chuyển phản hồi JSON thành Map
+      //chuyển phản hồi JSON thành Map
+      final Map<String, dynamic> responseBody = jsonDecode(response.body);
+      print('-------------------------------------------------------');
+      print(responseBody);
+      print(responseBody['errCode']);
       if (responseBody['errCode'] == 0) {
-        return responseBody['message'];
+        return {'success': true, 'message': responseBody['message']};
       } else {
-        throw Exception('Failed to register user: ${responseBody['message']}');
+        return {'success': false, 'message': responseBody['errMessage']};
       }
     } else {
       throw Exception('Failed to create account');
@@ -84,9 +87,6 @@ class UserRepository {
     );
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseBody = jsonDecode(response.body);
-      print('--------------------------------------------------------------------------------------');
-      print(responseBody);
-      print(responseBody['errCode']);
       if (responseBody['errCode'] == 0) {
         return {'success': true, 'message': responseBody['message']};
       } else {

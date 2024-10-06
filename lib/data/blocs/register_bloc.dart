@@ -37,7 +37,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     emit(RegisterState.loading());
     try {
       //await _userRepository.signInWithGoogle();
-      emit(RegisterState.success());
+      //emit(RegisterState.success());
     } catch (error) {
       emit(RegisterState.failure(error.toString()));
     }
@@ -49,9 +49,11 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       Emitter<RegisterState> emit) async {
     emit(RegisterState.loading());
     try {
-      await _userRepository.createUserWithEmailAndPassword(
+      final result = await _userRepository.createUserWithEmailAndPassword(
           event.email, event.password, event.firstName, event.gender);
-      emit(RegisterState.success());
+      if(result['success']){
+        emit(RegisterState.success(result['message']));
+      }
     } catch (error) {
       emit(RegisterState.failure(error.toString()));
     }

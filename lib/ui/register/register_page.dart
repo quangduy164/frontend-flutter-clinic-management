@@ -1,6 +1,4 @@
-import 'package:clinic_management/data/blocs/authentication_bloc.dart';
 import 'package:clinic_management/data/blocs/register_bloc.dart';
-import 'package:clinic_management/data/events/authentication_event.dart';
 import 'package:clinic_management/data/events/register_event.dart';
 import 'package:clinic_management/data/repository/user_repository.dart';
 import 'package:clinic_management/data/states/register_state.dart';
@@ -81,11 +79,9 @@ class _RegisterPageState extends State<RegisterPage>{
               SchedulerBinding.instance.addPostFrameCallback((_){
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Đăng ký thành công!')),
+                  SnackBar(content: Text('${registerState.successMessage}')),
                 );
               });
-              //thêm event authenticationEventLogin
-              BlocProvider.of<AuthenticationBloc>(context).add(AuthenticationEventLoggedIn());
             }
             return Padding(
               padding: EdgeInsets.all(20),
