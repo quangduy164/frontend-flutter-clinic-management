@@ -7,13 +7,15 @@ class SplashPage extends StatelessWidget{
       child: Scaffold(
           body: Stack(
             children: [
-              Image.asset(
-                'assets/images/background.jpg',
-                fit: BoxFit.cover, width: double.infinity, height: double.infinity,
-              ),
               Center(
-                child: Text('This is Splash',
-                  style: TextStyle(fontSize: 33, color: Colors.white),),
+                child: SizedBox(
+                  height: 300,
+                  width: 300,
+                  child: Image.asset(
+                    'assets/images/splash.png',
+                    fit: BoxFit.cover, width: double.infinity, height: double.infinity,
+                  ),
+                ),
               ),
             ],
           )

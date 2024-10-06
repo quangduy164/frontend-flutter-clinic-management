@@ -27,16 +27,22 @@ class _AdminHomePageState extends State<AdminHomePage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'Clinic Management',
-            style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.lightBlueAccent),
+          title: SizedBox(
+            height: 50,
+            width: 150,
+            child: Image.asset(
+              'assets/images/logo.png',
+              fit: BoxFit.contain,// Đảm bảo hình ảnh vừa với kích thước
+            ),
           ),
         ),
         drawer: _getDrawer(),
-        body: Padding(padding: const EdgeInsets.all(8.0), child: _getBody()),
+        body: Stack(
+          children: [
+            const Divider(),
+            _getBody()
+          ],
+        ),
       ),
     );
   }
@@ -86,20 +92,24 @@ class _AdminHomePageState extends State<AdminHomePage> {
   }
 
   Widget _getBody() {
-    return RefreshIndicator(
-      onRefresh: _refreshListUsers,
-      child: _getUsersTable(),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: RefreshIndicator(
+        onRefresh: _refreshListUsers,
+        child: _getUsersTable(),
+      ),
     );
   }
 
   Widget _getUsersTable() {
     return Column(
       children: [
-        Text(
+        const SizedBox(height: 10),
+        const Text(
           'Management Users',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 10),
         //xây dựng giao diện dựa trên kết quả của Future là futureGetAllUsers
         FutureBuilder<List<Map<String, dynamic>>>(
           future: futureGetAllUsers,

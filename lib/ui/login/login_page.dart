@@ -58,9 +58,16 @@ class _LoginPageState extends State<LoginPage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Clinic Management', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
-          backgroundColor: Colors.lightBlueAccent,
-          systemOverlayStyle: SystemUiOverlayStyle.light,
+          title: SizedBox(
+            height: 55,
+            width: 160,
+            child: Image.asset(
+              'assets/images/logo.png',
+              fit: BoxFit.contain,// Đảm bảo hình ảnh vừa với kích thước
+            ),
+          ),
+
+          systemOverlayStyle: SystemUiOverlayStyle.light,//điều chỉnh thanh hệ thống wifi, pin sáng
         ),
         body: BlocBuilder<LoginBloc, LoginState>(
           builder: (context, loginState) {
@@ -75,6 +82,7 @@ class _LoginPageState extends State<LoginPage> {
             }
             return Stack(
               children: [
+                const Divider(),
                 Padding(
                   padding: EdgeInsets.all(20),
                   child: Form(
