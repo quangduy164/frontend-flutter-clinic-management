@@ -1,3 +1,4 @@
+import 'package:clinic_management/ui/home/user_home/home_tab/item_handbook_section.dart';
 import 'package:clinic_management/ui/home/user_home/home_tab/item_medical_facility_section.dart';
 import 'package:clinic_management/ui/home/user_home/home_tab/item_outstanding_doctor_section.dart';
 import 'package:clinic_management/ui/home/user_home/home_tab/item_service_section.dart';
@@ -64,19 +65,28 @@ class HomeTab extends StatelessWidget{
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Padding(
-            padding: const EdgeInsets.all(15.0),
+            padding: const EdgeInsets.all(10.0),
             child: Row(
               children: [
-                ItemSpecialtySection(
+                ItemHandbookSection(
                     function: (){},
-                    image: 'assets/images/specialty/co-xuong-khop.png',
-                    text: 'Cơ xương khớp'
+                    image: 'assets/images/handbook/phong-kham-san-phu-khoa-gan-day.png',
+                    text: 'Tổng hợp phòng khám sản phụ khoa gần đây theo quận Hà Nội'
                 ),
-                const SizedBox(width: 15,),
-                ItemSpecialtySection(
+                ItemHandbookSection(
                     function: (){},
-                    image: 'assets/images/specialty/than-kinh.png',
-                    text: 'Thần kinh'
+                    image: 'assets/images/handbook/phong-kham-san-phu-khoa-gan-day.png',
+                    text: 'Tổng hợp phòng khám sản phụ khoa gần đây theo quận Hà Nội'
+                ),
+                ItemHandbookSection(
+                    function: (){},
+                    image: 'assets/images/handbook/phong-kham-san-phu-khoa-gan-day.png',
+                    text: 'Tổng hợp phòng khám sản phụ khoa gần đây theo quận Hà Nội'
+                ),
+                ItemHandbookSection(
+                    function: (){},
+                    image: 'assets/images/handbook/phong-kham-san-phu-khoa-gan-day.png',
+                    text: 'Tổng hợp phòng khám sản phụ khoa gần đây theo quận Hà Nội'
                 ),
               ],
             ),

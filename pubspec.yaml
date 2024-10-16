@@ -74,6 +74,7 @@ flutter:
     - assets/images/specialty/
     - assets/images/medical_facility/
     - assets/images/outstanding_doctor/
+    - assets/images/handbook/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
