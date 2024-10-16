@@ -1,4 +1,5 @@
 import 'package:clinic_management/ui/home/user_home/home_tab/item_medical_facility_section.dart';
+import 'package:clinic_management/ui/home/user_home/home_tab/item_outstanding_doctor_section.dart';
 import 'package:clinic_management/ui/home/user_home/home_tab/item_service_section.dart';
 import 'package:clinic_management/ui/home/user_home/home_tab/item_specialty_section.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +42,124 @@ class HomeTab extends StatelessWidget{
         ),
         _getService(),
         _getSpecialty(),
-        _getMedicalFacility()
+        _getMedicalFacility(),
+        _getOutstandingDoctor(),
+        _getHandBook()
+      ],
+    );
+  }
+
+  Widget _getHandBook(){
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(top: 15, left: 15),
+          child: Text('Cẩm nang',
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14),
+          ),
+        ),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Row(
+              children: [
+                ItemSpecialtySection(
+                    function: (){},
+                    image: 'assets/images/specialty/co-xuong-khop.png',
+                    text: 'Cơ xương khớp'
+                ),
+                const SizedBox(width: 15,),
+                ItemSpecialtySection(
+                    function: (){},
+                    image: 'assets/images/specialty/than-kinh.png',
+                    text: 'Thần kinh'
+                ),
+              ],
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget _getOutstandingDoctor(){
+    return Stack(
+      children: [
+        SizedBox(
+          height: 270,
+          child: Image.asset(
+            'assets/images/outstanding_doctor/background-outstanding-doctor.png',
+            fit: BoxFit.cover, width: double.infinity, height: double.infinity,
+          ),
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(top: 15, left: 15),
+              child: Text('Bác sĩ nổi bật',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14),
+              ),
+            ),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Row(
+                  children: [
+                    ItemOutstandingDoctorSection(
+                        function: (){},
+                        image: 'assets/images/outstanding_doctor/bs-pham-thi-hong-hoa.jpg',
+                        text: 'Tiến sĩ, Bác sĩ cao cấp Phạm Thị Hồng Hoa'
+                    ),
+                    const SizedBox(width: 10,),
+                    ItemOutstandingDoctorSection(
+                        function: (){},
+                        image: 'assets/images/outstanding_doctor/bs-nhan.png',
+                        text: 'Bác sĩ Chuyên khoa II Lê Văn Hiếu Nhân'
+                    ),
+                    const SizedBox(width: 10,),
+                    ItemOutstandingDoctorSection(
+                        function: (){},
+                        image: 'assets/images/outstanding_doctor/bs-nguyen-van-hien.jpg',
+                        text: 'Thạc sĩ, Bác sĩ Nguyễn Văn Hiển'
+                    ),
+                    const SizedBox(width: 10,),
+                    ItemOutstandingDoctorSection(
+                        function: (){},
+                        image: 'assets/images/outstanding_doctor/bs-cki-nguyen-thi-thanh-xuan.jpg',
+                        text: 'Bác sĩ Chuyên khoa I Nguyễn Thị Thanh Xuân'
+                    ),
+                    const SizedBox(width: 10,),
+                    ItemOutstandingDoctorSection(
+                        function: (){},
+                        image: 'assets/images/outstanding_doctor/bs-dieu-van.jpg',
+                        text: 'Phó Giáo sư, Tiến sĩ, Bác sĩ Nguyễn Khoa Diệu Vân'
+                    ),
+                    const SizedBox(width: 10,),
+                    ItemOutstandingDoctorSection(
+                        function: (){},
+                        image: 'assets/images/outstanding_doctor/bs-nguyen-duy-khanh.png',
+                        text: 'Thạc sĩ, Bác sĩ Nguyễn Duy Khánh'
+                    ),
+                    const SizedBox(width: 10,),
+                    ItemOutstandingDoctorSection(
+                        function: (){},
+                        image: 'assets/images/outstanding_doctor/bs-v-v-s.jpg',
+                        text: 'Tiến sĩ, Bác sĩ Võ Văn Sĩ'
+                    ),
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
       ],
     );
   }
@@ -79,7 +197,7 @@ class HomeTab extends StatelessWidget{
                 ItemMedicalFacilitySection(
                     function: (){},
                     image: 'assets/images/medical_facility/logo-doctor-check.jpg',
-                    text: 'Doctor Check - Tầm Soát Bệnh Để Sống'
+                    text: 'Doctor Check - Tầm Soát Bệnh Để Sống Thọ Hơn'
                 ),
                 const SizedBox(width: 15,),
                 ItemMedicalFacilitySection(

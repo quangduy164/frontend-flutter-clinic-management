@@ -13,11 +13,11 @@ class ItemSpecialtySection extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _ItemServiceSectionState();
+    return _ItemSpecialtySectionState();
   }
 }
 
-class _ItemServiceSectionState extends State<ItemSpecialtySection> {
+class _ItemSpecialtySectionState extends State<ItemSpecialtySection> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
