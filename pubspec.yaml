@@ -70,16 +70,9 @@ flutter:
     - assets/images/background.jpg
     - assets/images/splash.png
     - assets/images/logo.png
-    - assets/images/iconkham-chuyen-khoa.png
-    - assets/images/iconbai-test-suc-khoe.png
-    - assets/images/icongoi-phau-thuat.png
-    - assets/images/iconkham-nha-khoa.png
-    - assets/images/iconkham-tong-quat.png
-    - assets/images/iconkham-tu-xa.png
-    - assets/images/iconsong-khoe-tieu-duong.png
-    - assets/images/iconsuc-khoe-tinh-than.png
-    - assets/images/iconxet-nghiem-y-hoc.png
-    - assets/images/icony-te-gan-ban.png
+    - assets/images/
+    - assets/images/services/
+    - assets/images/specialty/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
