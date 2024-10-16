@@ -1,3 +1,4 @@
+import 'package:clinic_management/ui/home/user_home/home_tab/item_medical_facility_section.dart';
 import 'package:clinic_management/ui/home/user_home/home_tab/item_service_section.dart';
 import 'package:clinic_management/ui/home/user_home/home_tab/item_specialty_section.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +40,75 @@ class HomeTab extends StatelessWidget{
           ],
         ),
         _getService(),
-        _getSpecialty()
+        _getSpecialty(),
+        _getMedicalFacility()
+      ],
+    );
+  }
+
+  Widget _getMedicalFacility(){
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(top: 15, left: 15),
+          child: Text('Cơ sở y tế',
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14),
+          ),
+        ),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Row(
+              children: [
+                ItemMedicalFacilitySection(
+                    function: (){},
+                    image: 'assets/images/medical_facility/logo-viet-duc.jpg',
+                    text: 'Bệnh viện Hữu nghị Việt Đức'
+                ),
+                const SizedBox(width: 15,),
+                ItemMedicalFacilitySection(
+                    function: (){},
+                    image: 'assets/images/medical_facility/logo-bvcr.jpg',
+                    text: 'Bệnh viện Chợ Rẫy'
+                ),
+                const SizedBox(width: 15,),
+                ItemMedicalFacilitySection(
+                    function: (){},
+                    image: 'assets/images/medical_facility/logo-doctor-check.jpg',
+                    text: 'Doctor Check - Tầm Soát Bệnh Để Sống'
+                ),
+                const SizedBox(width: 15,),
+                ItemMedicalFacilitySection(
+                    function: (){},
+                    image: 'assets/images/medical_facility/logo-y-duoc-1.jpg',
+                    text: 'Phòng khám Bệnh viện Đại học Y Dược 1'
+                ),
+                const SizedBox(width: 15,),
+                ItemMedicalFacilitySection(
+                    function: (){},
+                    image: 'assets/images/medical_facility/logo-benhvien108.jpg',
+                    text: 'Bệnh viện Trung ương Quân đội 108'
+                ),
+                const SizedBox(width: 15,),
+                ItemMedicalFacilitySection(
+                    function: (){},
+                    image: 'assets/images/medical_facility/logo-hung-viet.jpg',
+                    text: 'Bệnh viện Ung bướu Hưng Việt'
+                ),
+                const SizedBox(width: 15,),
+                ItemMedicalFacilitySection(
+                    function: (){},
+                    image: 'assets/images/medical_facility/logo-medlatec.png',
+                    text: 'Hệ thống y tế MEDLATEC'
+                ),
+              ],
+            ),
+          ),
+        )
       ],
     );
   }
