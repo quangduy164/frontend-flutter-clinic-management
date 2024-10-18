@@ -1,17 +1,32 @@
-import 'package:clinic_management/ui/home/user_home/home_tab/item_handbook_section.dart';
-import 'package:clinic_management/ui/home/user_home/home_tab/item_medical_facility_section.dart';
-import 'package:clinic_management/ui/home/user_home/home_tab/item_outstanding_doctor_section.dart';
-import 'package:clinic_management/ui/home/user_home/home_tab/item_service_section.dart';
-import 'package:clinic_management/ui/home/user_home/home_tab/item_specialty_section.dart';
 import 'package:flutter/material.dart';
 
-class HomeTab extends StatelessWidget{
+import 'item_handbook_section.dart';
+import 'item_medical_facility_section.dart';
+import 'item_outstanding_doctor_section.dart';
+import 'item_service_section.dart';
+import 'item_specialty_section.dart';
+
+class HomeTab extends StatefulWidget{
   const HomeTab({super.key});
+
+  @override
+  State<StatefulWidget> createState() {
+    return _HomeTabState();
+  }
+
+}
+
+class _HomeTabState extends State<HomeTab>{
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _getBody()
+      body: Stack(
+        children: [
+          const Divider(),
+          _getBody()
+        ],
+      ),
     );
   }
 

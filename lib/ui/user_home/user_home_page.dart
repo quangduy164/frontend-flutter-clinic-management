@@ -1,11 +1,12 @@
 import 'package:clinic_management/data/blocs/authentication_bloc.dart';
 import 'package:clinic_management/data/events/authentication_event.dart';
-import 'package:clinic_management/ui/home/user_home/home_tab/home_tab.dart';
-import 'package:clinic_management/ui/home/user_home/notification_tab/notification_tab.dart';
-import 'package:clinic_management/ui/home/user_home/pesonal_tab/pesonal_tab.dart';
-import 'package:clinic_management/ui/home/user_home/schedule_tab/schedule_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'home_tab/home_tab.dart';
+import 'notification_tab/notification_tab.dart';
+import 'pesonal_tab/pesonal_tab.dart';
+import 'schedule_tab/schedule_tab.dart';
 
 class UserHomePage extends StatefulWidget {
   const UserHomePage({super.key});

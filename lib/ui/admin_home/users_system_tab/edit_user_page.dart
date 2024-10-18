@@ -16,6 +16,7 @@ class _EditUserPageState extends State<EditUserPage> {
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
   late TextEditingController _addressController;
+  late TextEditingController _roleIdController;
 
   @override
   void initState() {
@@ -23,6 +24,7 @@ class _EditUserPageState extends State<EditUserPage> {
     _firstNameController = TextEditingController(text: widget.user['firstName']);
     _lastNameController = TextEditingController(text: widget.user['lastName']);
     _addressController = TextEditingController(text: widget.user['address']);
+    _roleIdController = TextEditingController(text: widget.user['roleId']);
   }
 
   @override
@@ -30,6 +32,7 @@ class _EditUserPageState extends State<EditUserPage> {
     _firstNameController.dispose();
     _lastNameController.dispose();
     _addressController.dispose();
+    _roleIdController.dispose();
     super.dispose();
   }
 
@@ -76,6 +79,16 @@ class _EditUserPageState extends State<EditUserPage> {
                     return null;
                   },
                 ),
+                TextFormField(
+                  controller: _roleIdController,
+                  decoration: InputDecoration(labelText: 'RoleId'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Vui lòng nhập vai trò';
+                    }
+                    return null;
+                  },
+                ),
                 SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
@@ -100,6 +113,7 @@ class _EditUserPageState extends State<EditUserPage> {
       'firstName': _firstNameController.text,
       'lastName': _lastNameController.text,
       'address': _addressController.text,
+      'roleId': int.parse(_roleIdController.text)//chuyển sang int
     };
 
     try {
@@ -108,6 +122,7 @@ class _EditUserPageState extends State<EditUserPage> {
         updatedUser['firstName'],
         updatedUser['lastName'],
         updatedUser['address'],
+        updatedUser['roleId']
       );
 
       if (result['success']) {

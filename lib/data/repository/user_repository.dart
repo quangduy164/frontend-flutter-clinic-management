@@ -72,7 +72,7 @@ class UserRepository {
   }
 
   //cập nhật thông tin người dùng
-  Future<Map<String, dynamic>> updateUser(int id, String firstName, String lastName, String address) async {
+  Future<Map<String, dynamic>> updateUser(int id, String firstName, String lastName, String address, int roleId) async {
     final response = await http.put(
       Uri.parse('$apiUrl/edit-user'), // Đường dẫn API update
       headers: <String, String>{
@@ -83,6 +83,7 @@ class UserRepository {
         'firstName': firstName.trim(),
         'lastName': lastName.trim(),
         'address': address.trim(),
+        'roleId': roleId
       }),
     );
     if (response.statusCode == 200) {

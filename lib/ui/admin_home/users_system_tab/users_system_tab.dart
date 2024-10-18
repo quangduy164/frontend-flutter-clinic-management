@@ -1,18 +1,18 @@
-import 'package:clinic_management/data/blocs/authentication_bloc.dart';
-import 'package:clinic_management/data/events/authentication_event.dart';
 import 'package:clinic_management/data/repository/user_repository.dart';
-import 'package:clinic_management/ui/home/admin_home/edit_user_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-class AdminHomePage extends StatefulWidget {
+import 'edit_user_page.dart';
+
+class UsersSystemTab extends StatefulWidget{
+  const UsersSystemTab({super.key});
+
   @override
   State<StatefulWidget> createState() {
-    return _AdminHomePageState();
+    return _UsersSystemTabState();
   }
 }
 
-class _AdminHomePageState extends State<AdminHomePage> {
+class _UsersSystemTabState extends State<UsersSystemTab>{
   late Future<List<Map<String, dynamic>>> futureGetAllUsers;
   final UserRepository _userRepository = UserRepository();
 
@@ -24,70 +24,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: SizedBox(
-            height: 50,
-            width: 150,
-            child: Image.asset(
-              'assets/images/logo.png',
-              fit: BoxFit.contain,// Đảm bảo hình ảnh vừa với kích thước
-            ),
-          ),
-        ),
-        drawer: _getDrawer(),
-        body: Stack(
-          children: [
-            const Divider(),
-            _getBody()
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _getDrawer() {
-    return Drawer(
-      width: MediaQuery.of(context).size.width * 0.8,
-      child: ListView(
-        padding: EdgeInsets.zero, //để phủ kín màu drawerheader
-        children: [
-          Container(
-            height: 80,
-            child: DrawerHeader(
-              decoration: BoxDecoration(color: Colors.lightBlueAccent),
-              child: ListTile(
-                leading: Icon(Icons.admin_panel_settings),
-                title: Text('Admin',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                onTap: () {
-                  Navigator.pop(context); // Close the drawer
-                },
-              ),
-            ),
-          ),
-          //Danh sách options
-          ListTile(
-            leading: Icon(Icons.home),
-            title: Text('Home'),
-            onTap: () {
-              Navigator.pop(context); //đóng drawer
-            },
-          ),
-          Divider(), // Add a separator line
-          ListTile(
-            leading: Icon(Icons.exit_to_app),
-            title: Text('Logout'),
-            onTap: () {
-              Navigator.pop(context);
-              //Đăng xuất
-              BlocProvider.of<AuthenticationBloc>(context)
-                  .add(AuthenticationEventLoggedOut());
-            },
-          ),
-        ],
-      ),
+    return Scaffold(
+      body: _getBody()
     );
   }
 
