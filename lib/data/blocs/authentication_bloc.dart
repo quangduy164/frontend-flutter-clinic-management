@@ -23,7 +23,11 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
       // Kiểm tra token hợp lệ qua API Express
       final userData = await _userRepository.getUserFromToken(accessToken);
       if (userData != null) {
-        emit(AuthenticationStateSuccess(email: userData['email'], role: userData['roleId']));
+        emit(AuthenticationStateSuccess(
+            email: userData['email'],
+            role: userData['roleId'],
+            firstName: userData['firstName']
+        ));
       } else {
         emit(AuthenticationStateFailure());
       }
@@ -38,7 +42,11 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
     final accessToken = await _userRepository.getAccessToken();
     if (accessToken != null) {
       final userData = await _userRepository.getUserFromToken(accessToken);
-      emit(AuthenticationStateSuccess(email: userData?['email'], role: userData?['roleId']));
+      emit(AuthenticationStateSuccess(
+          email: userData?['email'],
+          role: userData?['roleId'],
+          firstName: userData?['firstName']
+      ));
     } else {
       emit(AuthenticationStateFailure());
     }

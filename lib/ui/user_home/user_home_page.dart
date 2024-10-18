@@ -9,7 +9,8 @@ import 'pesonal_tab/pesonal_tab.dart';
 import 'schedule_tab/schedule_tab.dart';
 
 class UserHomePage extends StatefulWidget {
-  const UserHomePage({super.key});
+  final String firstName;
+  const UserHomePage({super.key, required this.firstName});
 
   @override
   State<StatefulWidget> createState() {
@@ -21,10 +22,10 @@ class _UserHomePageState extends State<UserHomePage> {
   int _selectedIndex = 0; // Chỉ số tab hiện tại
 
   final List<Widget> _tabs = [
-    HomeTab(),
-    NotificationTab(),
-    ScheduleTab(),
-    PesonalTab(),
+    const HomeTab(),
+    const NotificationTab(),
+    const ScheduleTab(),
+    const PesonalTab(),
   ];
 
 
@@ -76,14 +77,14 @@ class _UserHomePageState extends State<UserHomePage> {
       child: ListView(
         padding: EdgeInsets.zero, //để phủ kín màu drawerheader
         children: [
-          Container(
+          SizedBox(
             height: 80,
             child: DrawerHeader(
-              decoration: BoxDecoration(color: Colors.lightBlueAccent),
+              decoration: const BoxDecoration(color: Colors.lightBlueAccent),
               child: ListTile(
-                leading: Icon(Icons.admin_panel_settings),
-                title: Text('Admin',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                leading: const Icon(Icons.account_circle),
+                title: Text(widget.firstName,
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
                 onTap: () {
                   Navigator.pop(context); // Close the drawer
                 },
@@ -92,16 +93,16 @@ class _UserHomePageState extends State<UserHomePage> {
           ),
           //Danh sách options
           ListTile(
-            leading: Icon(Icons.home),
-            title: Text('Home'),
+            leading: const Icon(Icons.home),
+            title: const Text('Home'),
             onTap: () {
               Navigator.pop(context); //đóng drawer
             },
           ),
-          Divider(), // Add a separator line
+          const Divider(), // Add a separator line
           ListTile(
-            leading: Icon(Icons.exit_to_app),
-            title: Text('Logout'),
+            leading: const Icon(Icons.exit_to_app),
+            title: const Text('Logout'),
             onTap: () {
               Navigator.pop(context);
               //Đăng xuất
