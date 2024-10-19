@@ -9,8 +9,9 @@ import 'pesonal_tab/pesonal_tab.dart';
 import 'schedule_tab/schedule_tab.dart';
 
 class UserHomePage extends StatefulWidget {
+  final String email;
   final String firstName;
-  const UserHomePage({super.key, required this.firstName});
+  const UserHomePage({super.key,required this.email, required this.firstName});
 
   @override
   State<StatefulWidget> createState() {
@@ -21,11 +22,11 @@ class UserHomePage extends StatefulWidget {
 class _UserHomePageState extends State<UserHomePage> {
   int _selectedIndex = 0; // Chỉ số tab hiện tại
 
-  final List<Widget> _tabs = [
+  late final List<Widget> _tabs = [
     const HomeTab(),
     const NotificationTab(),
     const ScheduleTab(),
-    const PesonalTab(),
+    PesonalTab(email: widget.email,),
   ];
 
 

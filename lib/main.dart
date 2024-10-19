@@ -44,7 +44,9 @@ class MyApp extends StatelessWidget {
               if (authenticationState.role == '1') {
                 return AdminHomePage(firstName: authenticationState.firstName,); // Trang chính cho Admin
               } else {
-                return UserHomePage(firstName: authenticationState.firstName,); // Trang chính cho User
+                return UserHomePage(
+                  email: authenticationState.email,
+                  firstName: authenticationState.firstName,); // Trang chính cho User
               }
             } else if (authenticationState is AuthenticationStateFailure) {
               return BlocProvider(

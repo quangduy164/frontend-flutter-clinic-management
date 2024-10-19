@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 //cho phép ứng dụng lưu trữ dữ liệu dưới dạng key-value trên bộ nhớ cục bộ của thiết bị
@@ -86,6 +87,33 @@ class UserRepository {
         'roleId': roleId
       }),
     );
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseBody = jsonDecode(response.body);
+      if (responseBody['errCode'] == 0) {
+        return {'success': true, 'message': responseBody['message']};
+      } else {
+        return {'success': false, 'message': responseBody['errMessage']};
+      }
+    } else {
+      throw Exception('Failed to update user');
+    }
+  }
+
+  // Hàm cập nhật avatar người dùng
+  Future<Map<String, dynamic>> updateUserImage(String email, Uint8List imageBytes) async {
+    String base64Image = base64Encode(imageBytes); // Mã hóa ảnh thành Base64
+
+    final response = await http.put(
+      Uri.parse('$apiUrl/update-user-image'), // Đường dẫn API
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'email': email.trim(),
+        'image': base64Image, // Gửi ảnh dưới dạng chuỗi Base64
+      }),
+    );
+
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseBody = jsonDecode(response.body);
       if (responseBody['errCode'] == 0) {
