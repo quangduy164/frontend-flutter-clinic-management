@@ -12,22 +12,22 @@ class AuthenticationStateInitial
 
 //Trạng thái đăng nhập thành công lưu email và roleUser
 class AuthenticationStateSuccess extends AuthenticationState {
-  final String email;
+  final int userId;
   final String role; // Thêm thuộc tính role
   final String firstName; // Thêm thuộc tính firstName
 
   const AuthenticationStateSuccess({
-    required this.email,
+    required this.userId,
     required this.role,
     required this.firstName
   });
 
   @override
-  List<Object?> get props => [email, role];
+  List<Object?> get props => [userId, role];
 
   @override
   String toString() {
-    return 'AuthenticationStateSuccess{userId: $email, role: $role}';
+    return 'AuthenticationStateSuccess{userId: $userId, role: $role}';
   }
 }
 

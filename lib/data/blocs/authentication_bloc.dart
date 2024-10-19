@@ -24,7 +24,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
       final userData = await _userRepository.getUserFromToken(accessToken);
       if (userData != null) {
         emit(AuthenticationStateSuccess(
-            email: userData['email'],
+            userId: userData['id'],
             role: userData['roleId'],
             firstName: userData['firstName']
         ));
@@ -43,7 +43,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
     if (accessToken != null) {
       final userData = await _userRepository.getUserFromToken(accessToken);
       emit(AuthenticationStateSuccess(
-          email: userData?['email'],
+          userId: userData?['id'],
           role: userData?['roleId'],
           firstName: userData?['firstName']
       ));

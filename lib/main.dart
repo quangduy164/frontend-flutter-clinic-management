@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
                 return AdminHomePage(firstName: authenticationState.firstName,); // Trang chính cho Admin
               } else {
                 return UserHomePage(
-                  email: authenticationState.email,
+                  userId: authenticationState.userId,
                   firstName: authenticationState.firstName,); // Trang chính cho User
               }
             } else if (authenticationState is AuthenticationStateFailure) {

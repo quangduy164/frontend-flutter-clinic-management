@@ -8,8 +8,8 @@ import '../../../data/repository/user_repository.dart';
 
 
 class PesonalTab extends StatefulWidget {
-  final String email;
-  const PesonalTab({super.key, required this.email});
+  final int userId;
+  const PesonalTab({super.key, required this.userId});
 
   @override
   State<StatefulWidget> createState() {
@@ -19,6 +19,12 @@ class PesonalTab extends StatefulWidget {
 
 class _PesonalTabState extends State<PesonalTab> {
   Uint8List? _imageAvatar; // Dữ liệu ảnh dưới dạng byte
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserAvatar(); // Lấy avatar từ API khi khởi tạo
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +65,29 @@ class _PesonalTabState extends State<PesonalTab> {
     );
   }
 
+  Future<void> _loadUserAvatar() async {
+    try {
+      // Gọi API lấy thông tin người dùng
+      final user = await UserRepository().getUser(widget.userId);
+
+      // Kiểm tra nếu tồn tại ảnh avatar
+      if (user.containsKey('image') && user['image'] != null) {
+        final List<int> imageData = List<int>.from(user['image']['data']);
+        debugPrint('Image data length: ${imageData.length}');
+
+        if (imageData.isNotEmpty) {
+          setState(() {
+            _imageAvatar = Uint8List.fromList(imageData);
+          });
+        } else {
+          debugPrint('Dữ liệu hình ảnh rỗng.');
+        }
+      }
+    } catch (e) {
+      debugPrint('Lỗi khi tải avatar: $e');
+    }
+  }
+
   // Hàm chọn ảnh từ thư viện
   void selectImage() async {
     Uint8List? img = await _pickImage(ImageSource.gallery);
@@ -67,9 +96,9 @@ class _PesonalTabState extends State<PesonalTab> {
         _imageAvatar = img;
       });
 
-      // Gọi API cập nhật ảnh
+      // Gọi API cập nhật ảnh vào database
       try {
-        final result = await UserRepository().updateUserImage(widget.email, img);
+        final result = await UserRepository().updateUserImage(widget.userId, img);
         if (result['success']) {
           debugPrint("Cập nhật ảnh thành công");
         } else {

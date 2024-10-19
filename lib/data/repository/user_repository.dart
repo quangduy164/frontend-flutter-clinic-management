@@ -99,8 +99,8 @@ class UserRepository {
     }
   }
 
-  // Hàm cập nhật avatar người dùng
-  Future<Map<String, dynamic>> updateUserImage(String email, Uint8List imageBytes) async {
+  // Hàm cập nhật avatar người dùng vào database
+  Future<Map<String, dynamic>> updateUserImage(int userId, Uint8List imageBytes) async {
     String base64Image = base64Encode(imageBytes); // Mã hóa ảnh thành Base64
 
     final response = await http.put(
@@ -109,7 +109,7 @@ class UserRepository {
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, dynamic>{
-        'email': email.trim(),
+        'id': userId,
         'image': base64Image, // Gửi ảnh dưới dạng chuỗi Base64
       }),
     );
@@ -122,7 +122,7 @@ class UserRepository {
         return {'success': false, 'message': responseBody['errMessage']};
       }
     } else {
-      throw Exception('Failed to update user');
+      throw Exception('Failed to update user image');
     }
   }
 
@@ -168,7 +168,7 @@ class UserRepository {
     }
   }
 
-  //lấy thông tin người dùng từ API
+  //lấy tất cả thông tin người dùng từ API
   Future<List<Map<String, dynamic>>> getAllUsers(String userId) async {
     final response = await http.get(
       Uri.parse('$apiUrl/get-all-users?id=${userId}'),
@@ -189,6 +189,27 @@ class UserRepository {
       }
     } else {
       throw Exception('Failed to fetch users');
+    }
+  }
+
+  //lấy thông tin người dùng từ API
+  Future<Map<String, dynamic>> getUser(int userId) async {
+    final response = await http.get(
+      Uri.parse('$apiUrl/get-user?id=$userId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseBody = jsonDecode(response.body);
+      if (responseBody['errCode'] == 0) {
+        return responseBody['user']; // Trả về object user
+      } else {
+        throw Exception('Failed to fetch user: ${responseBody['message']}');
+      }
+    } else {
+      throw Exception('Failed to fetch user');
     }
   }
 

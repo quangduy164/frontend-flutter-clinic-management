@@ -9,9 +9,9 @@ import 'pesonal_tab/pesonal_tab.dart';
 import 'schedule_tab/schedule_tab.dart';
 
 class UserHomePage extends StatefulWidget {
-  final String email;
+  final int userId;
   final String firstName;
-  const UserHomePage({super.key,required this.email, required this.firstName});
+  const UserHomePage({super.key,required this.userId, required this.firstName});
 
   @override
   State<StatefulWidget> createState() {
@@ -26,7 +26,7 @@ class _UserHomePageState extends State<UserHomePage> {
     const HomeTab(),
     const NotificationTab(),
     const ScheduleTab(),
-    PesonalTab(email: widget.email,),
+    PesonalTab(userId: widget.userId,),
   ];
 
 
