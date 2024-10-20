@@ -113,7 +113,7 @@ class _EditUserPageState extends State<EditUserPage> {
       'firstName': _firstNameController.text,
       'lastName': _lastNameController.text,
       'address': _addressController.text,
-      'roleId': int.parse(_roleIdController.text)//chuyển sang int
+      'roleId': _roleIdController.text
     };
 
     try {

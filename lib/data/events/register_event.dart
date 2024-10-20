@@ -47,7 +47,7 @@ class RegisterEventWithEmailAndPasswordPressed extends RegisterEvent {
   final String email;
   final String password;
   final String firstName;
-  final int gender;
+  final String gender;
 
   const RegisterEventWithEmailAndPasswordPressed({
     required this.email,

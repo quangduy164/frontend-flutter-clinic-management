@@ -38,7 +38,7 @@ class UserRepository {
 
   // Tạo tài khoản mới với email và mật khẩu thông qua API Express
   Future<Map<String, dynamic>> createUserWithEmailAndPassword(
-      String email, String password, String firstName, int gender) async {
+      String email, String password, String firstName, String gender) async {
     final response = await http.post(
       Uri.parse('$apiUrl/create-new-user'),
       headers: <String, String>{
@@ -50,8 +50,8 @@ class UserRepository {
         'firstName': firstName.trim(),
         'lastName': 'Nguyen'.trim(),
         'address': 'VietNam'.trim(),
-        'gender': gender,
-        'roleId': 3
+        'gender': gender.trim(),
+        'roleId': 'R3'
       }),
     );
 
@@ -73,7 +73,7 @@ class UserRepository {
   }
 
   //cập nhật thông tin người dùng
-  Future<Map<String, dynamic>> updateUser(int id, String firstName, String lastName, String address, int roleId) async {
+  Future<Map<String, dynamic>> updateUser(int id, String firstName, String lastName, String address, String roleId) async {
     final response = await http.put(
       Uri.parse('$apiUrl/edit-user'), // Đường dẫn API update
       headers: <String, String>{
@@ -84,7 +84,7 @@ class UserRepository {
         'firstName': firstName.trim(),
         'lastName': lastName.trim(),
         'address': address.trim(),
-        'roleId': roleId
+        'roleId': roleId.trim()
       }),
     );
     if (response.statusCode == 200) {

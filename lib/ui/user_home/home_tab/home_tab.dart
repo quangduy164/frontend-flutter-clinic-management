@@ -1,3 +1,6 @@
+import 'dart:typed_data';
+
+import 'package:clinic_management/data/repository/doctor_repository.dart';
 import 'package:flutter/material.dart';
 
 import 'item_handbook_section.dart';
@@ -18,6 +21,16 @@ class HomeTab extends StatefulWidget{
 
 class _HomeTabState extends State<HomeTab>{
 
+  final DoctorRepository doctorRepository = DoctorRepository();
+  List<Map<String, dynamic>> doctors = [];//bác sĩ nổi bật
+  bool isLoading = true; // Trạng thái loading
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchOutstandingDoctors(); //Gọi API khi widget được tạo
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,34 +46,36 @@ class _HomeTabState extends State<HomeTab>{
   Widget _getBody(){
     return ListView(
       children: [
-        Stack(
-          children: [
-            Container(
-              height: 140,
-              color: const Color.fromRGBO(146, 215, 238, 1.0),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: Center(
-                child: Column(
-                  children: [
-                    const Text('Nơi khởi nguồn sức khỏe',
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 20)
-                    ),
-                    _searchBar()
-                  ],
-                ),
-              ),
-            )
-          ],
-        ),
+        _headerSection(),
         _getService(),
         _getSpecialty(),
         _getMedicalFacility(),
         _getOutstandingDoctor(),
         _getHandBook()
+      ],
+    );
+  }
+
+  Widget _headerSection() {
+    return Stack(
+      children: [
+        Container(
+          height: 140,
+          color: const Color.fromRGBO(146, 215, 238, 1.0),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 10),
+          child: Center(
+            child: Column(
+              children: [
+                const Text('Nơi khởi nguồn sức khỏe',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600, fontSize: 20)),
+                _searchBar(),
+              ],
+            ),
+          ),
+        )
       ],
     );
   }
@@ -111,14 +126,22 @@ class _HomeTabState extends State<HomeTab>{
     );
   }
 
-  Widget _getOutstandingDoctor(){
+  Widget _getOutstandingDoctor() {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (doctors.isEmpty) {
+      return const Center(child: Text('Không có bác sĩ nổi bật.'));
+    }
     return Stack(
       children: [
         SizedBox(
           height: 270,
           child: Image.asset(
             'assets/images/outstanding_doctor/background-outstanding-doctor.png',
-            fit: BoxFit.cover, width: double.infinity, height: double.infinity,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
           ),
         ),
         Column(
@@ -126,10 +149,9 @@ class _HomeTabState extends State<HomeTab>{
           children: [
             const Padding(
               padding: EdgeInsets.only(top: 15, left: 15),
-              child: Text('Bác sĩ nổi bật',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14),
+              child: Text(
+                'Bác sĩ nổi bật',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
               ),
             ),
             SingleChildScrollView(
@@ -137,52 +159,35 @@ class _HomeTabState extends State<HomeTab>{
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Row(
-                  children: [
-                    ItemOutstandingDoctorSection(
-                        function: (){},
-                        image: 'assets/images/outstanding_doctor/bs-pham-thi-hong-hoa.jpg',
-                        text: 'Tiến sĩ, Bác sĩ cao cấp Phạm Thị Hồng Hoa'
-                    ),
-                    const SizedBox(width: 10,),
-                    ItemOutstandingDoctorSection(
-                        function: (){},
-                        image: 'assets/images/outstanding_doctor/bs-nhan.png',
-                        text: 'Bác sĩ Chuyên khoa II Lê Văn Hiếu Nhân'
-                    ),
-                    const SizedBox(width: 10,),
-                    ItemOutstandingDoctorSection(
-                        function: (){},
-                        image: 'assets/images/outstanding_doctor/bs-nguyen-van-hien.jpg',
-                        text: 'Thạc sĩ, Bác sĩ Nguyễn Văn Hiển'
-                    ),
-                    const SizedBox(width: 10,),
-                    ItemOutstandingDoctorSection(
-                        function: (){},
-                        image: 'assets/images/outstanding_doctor/bs-cki-nguyen-thi-thanh-xuan.jpg',
-                        text: 'Bác sĩ Chuyên khoa I Nguyễn Thị Thanh Xuân'
-                    ),
-                    const SizedBox(width: 10,),
-                    ItemOutstandingDoctorSection(
-                        function: (){},
-                        image: 'assets/images/outstanding_doctor/bs-dieu-van.jpg',
-                        text: 'Phó Giáo sư, Tiến sĩ, Bác sĩ Nguyễn Khoa Diệu Vân'
-                    ),
-                    const SizedBox(width: 10,),
-                    ItemOutstandingDoctorSection(
-                        function: (){},
-                        image: 'assets/images/outstanding_doctor/bs-nguyen-duy-khanh.png',
-                        text: 'Thạc sĩ, Bác sĩ Nguyễn Duy Khánh'
-                    ),
-                    const SizedBox(width: 10,),
-                    ItemOutstandingDoctorSection(
-                        function: (){},
-                        image: 'assets/images/outstanding_doctor/bs-v-v-s.jpg',
-                        text: 'Tiến sĩ, Bác sĩ Võ Văn Sĩ'
-                    ),
-                  ],
+                  children: doctors.map((doctor) {
+                    final name =
+                        '${doctor['lastName']} ${doctor['firstName']}';
+                    final position = doctor['positionData']['valueVi'] ?? '';
+                    // Lấy ảnh từ API và kiểm tra tính hợp lệ
+                    Uint8List? image;
+                    if (doctor.containsKey('image') && doctor['image'] != null) {
+                      final List<int> imageData = List<int>.from(doctor['image']['data']);
+                      debugPrint('Image data length: ${imageData.length}');
+                      if (imageData.isNotEmpty) {
+                        setState(() {
+                          image = Uint8List.fromList(imageData);
+                        });
+                      } else {
+                        debugPrint('Dữ liệu hình ảnh rỗng.');
+                      }
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 10.0),
+                      child: ItemOutstandingDoctorSection(
+                        function: () {},
+                        image: image, // Có thể là null nếu k có dữ liệu
+                        text: '$position - $name',
+                      ),
+                    );
+                  }).toList(),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ],
@@ -446,5 +451,22 @@ class _HomeTabState extends State<HomeTab>{
         ),
       ),
     );
+  }
+
+  Future<void> _fetchOutstandingDoctors() async {
+    try {
+      List<Map<String, dynamic>> fetchedDoctors =
+      await doctorRepository.getOutstandingDoctor(5); // Lấy 5 bác sĩ
+      setState(() {
+        doctors = fetchedDoctors;
+      });
+    } catch (e) {
+      // Xử lý lỗi nếu cần thiết
+      debugPrint('Lỗi khi lấy danh sách bác sĩ: $e');
+    } finally {
+      setState(() {
+        isLoading = false; // Hoàn tất việc load dữ liệu
+      });
+    }
   }
 }

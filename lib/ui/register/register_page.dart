@@ -130,12 +130,16 @@ class _RegisterPageState extends State<RegisterPage>{
                         value: _selectedGender,
                         items: [
                           DropdownMenuItem(
-                            value: 'Male',
+                            value: 'M',
                             child: Text('Male'),
                           ),
                           DropdownMenuItem(
-                            value: 'Female',
+                            value: 'F',
                             child: Text('Female'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'O',
+                            child: Text('Other'),
                           ),
                         ],
                         onChanged: (value) {
@@ -184,7 +188,7 @@ class _RegisterPageState extends State<RegisterPage>{
         email: _emailController.text,
         password: _passwordController.text,
         firstName: _firstNameController.text,
-        gender: _selectedGender == 'Male' ? 1 : 0
+        gender: _selectedGender.toString()
     ));
 
   }

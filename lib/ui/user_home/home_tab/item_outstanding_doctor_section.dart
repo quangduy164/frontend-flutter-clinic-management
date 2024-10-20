@@ -1,8 +1,10 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 
 class ItemOutstandingDoctorSection extends StatefulWidget {
   final Function? function;
-  final String image;
+  final Uint8List? image;
   final String text;
 
   const ItemOutstandingDoctorSection(
@@ -39,8 +41,14 @@ class _ItemOutstandingSectionState extends State<ItemOutstandingDoctorSection> {
                   const SizedBox(height: 5),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(57),
-                    child: Image.asset(
-                      '${widget.image}',
+                    child: widget.image != null && widget.image!.isNotEmpty
+                        ? Image.memory(
+                      widget.image!,
+                      height: 114,
+                      fit: BoxFit.contain,
+                    )
+                        : Image.asset(
+                      'assets/images/user_avata.png',
                       height: 114,
                       fit: BoxFit.contain,
                     ),

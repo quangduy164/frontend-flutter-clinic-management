@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
         child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
           builder: (context, authenticationState) {
             if (authenticationState is AuthenticationStateSuccess) {
-              if (authenticationState.role == '1') {
+              if (authenticationState.role == 'R1') {
                 return AdminHomePage(firstName: authenticationState.firstName,); // Trang chính cho Admin
               } else {
                 return UserHomePage(
