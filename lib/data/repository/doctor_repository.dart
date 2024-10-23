@@ -53,4 +53,36 @@ class DoctorRepository{
       throw Exception('Failed to fetch doctors');
     }
   }
+
+  // Lưu thông tin doctor qua api
+  Future<Map<String, dynamic>> saveInforDoctor(
+      int doctorId, String content, String? description) async {
+    final response = await http.post(
+      Uri.parse('$apiUrl/save-infor-doctor'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'doctorId': doctorId,
+        'content': content.trim(),
+        'description': description,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      // Xử lý phản hồi từ API
+      //chuyển phản hồi JSON thành Map
+      final Map<String, dynamic> responseBody = jsonDecode(response.body);
+      print('-------------------------------------------------------');
+      print(responseBody);
+      print(responseBody['errCode']);
+      if (responseBody['errCode'] == 0) {
+        return {'success': true, 'message': responseBody['message']};
+      } else {
+        return {'success': false, 'message': responseBody['errMessage']};
+      }
+    } else {
+      throw Exception('Failed to save information doctor');
+    }
+  }
 }

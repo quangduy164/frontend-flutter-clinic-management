@@ -9,9 +9,12 @@ class ManageDoctors extends StatefulWidget {
 }
 
 class _ManageDoctorsState extends State<ManageDoctors> {
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _contentController = TextEditingController();
+
   late Future<List<Map<String, dynamic>>> futureGetAllDoctors;
   final DoctorRepository _doctorRepository = DoctorRepository();
-  String? _selectedDoctor; // Biến chọn doctor
+  String? _selectedDoctorId; // Biến chọn doctorId
 
   @override
   void initState() {
@@ -92,6 +95,8 @@ class _ManageDoctorsState extends State<ManageDoctors> {
           _doctorDescription(),
           const SizedBox(height: 15),
           _doctorDetailContent(),
+          const SizedBox(height: 15),
+          _buttonSaveInforDoctor()
         ],
       ),
     );
@@ -103,7 +108,7 @@ class _ManageDoctorsState extends State<ManageDoctors> {
         icon: Icon(Icons.person),
         labelText: 'Chọn bác sĩ',
       ),
-      value: _selectedDoctor,
+      value: _selectedDoctorId,
       items: doctors.map((doctor) {
         // Tạo DropdownMenuItem từ mỗi bác sĩ trong danh sách
         return DropdownMenuItem<String>(
@@ -113,7 +118,7 @@ class _ManageDoctorsState extends State<ManageDoctors> {
       }).toList(),
       onChanged: (value) {
         setState(() {
-          _selectedDoctor = value;
+          _selectedDoctorId = value;
         });
       },
     );
@@ -128,7 +133,7 @@ class _ManageDoctorsState extends State<ManageDoctors> {
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
         ),
         const SizedBox(height: 5),
-        _buildScrollableTextField(),
+        _buildScrollableTextField(_descriptionController),
       ],
     );
   }
@@ -142,15 +147,16 @@ class _ManageDoctorsState extends State<ManageDoctors> {
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
         ),
         const SizedBox(height: 5),
-        _buildScrollableTextField(),
+        _buildScrollableTextField(_contentController),
       ],
     );
   }
 
-  Widget _buildScrollableTextField() {
+  Widget _buildScrollableTextField(TextEditingController controller) {
     return SizedBox(
       height: 150, // Cố định chiều cao để tránh tràn
       child: TextField(
+        controller: controller,
         maxLines: null, // Cho phép nhiều dòng
         expands: true, // Giúp TextField mở rộng bên trong SizedBox
         textAlign: TextAlign.start, // Căn trái văn bản
@@ -174,6 +180,49 @@ class _ManageDoctorsState extends State<ManageDoctors> {
         ),
       ),
     );
+  }
+
+  Widget _buttonSaveInforDoctor(){
+    return ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.lightGreen,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+        ),
+        onPressed: (){
+          _saveInforDoctor();
+        },
+        child: const Text(
+          'Lưu thông tin',
+          style: TextStyle(fontSize: 16, color: Colors.white),
+        )
+    );
+  }
+
+  void _saveInforDoctor() async {
+    // Gọi API để cập nhật người dùng ở đây
+    try {
+      final result = await _doctorRepository.saveInforDoctor(
+          int.parse(_selectedDoctorId!),
+          _contentController.text,
+          _descriptionController.text
+      );
+
+      if (result['success']) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Lưu thông tin bác sĩ thành công')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${result['message']}')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
   }
 
   // Làm mới danh sách user
