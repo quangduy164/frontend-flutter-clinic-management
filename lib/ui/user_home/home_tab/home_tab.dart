@@ -167,7 +167,6 @@ class _HomeTabState extends State<HomeTab>{
                     Uint8List? image;
                     if (doctor.containsKey('image') && doctor['image'] != null) {
                       final List<int> imageData = List<int>.from(doctor['image']['data']);
-                      debugPrint('Image data length: ${imageData.length}');
                       if (imageData.isNotEmpty) {
                         setState(() {
                           image = Uint8List.fromList(imageData);
@@ -456,7 +455,7 @@ class _HomeTabState extends State<HomeTab>{
   Future<void> _fetchOutstandingDoctors() async {
     try {
       List<Map<String, dynamic>> fetchedDoctors =
-      await doctorRepository.getOutstandingDoctor(5); // Lấy 5 bác sĩ
+      await doctorRepository.getOutstandingDoctor(7); // Lấy 5 bác sĩ
       setState(() {
         doctors = fetchedDoctors;
       });

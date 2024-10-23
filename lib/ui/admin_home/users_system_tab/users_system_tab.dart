@@ -23,6 +23,11 @@ class _UsersSystemTabState extends State<UsersSystemTab>{
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _getBody()
@@ -87,7 +92,7 @@ class _UsersSystemTabState extends State<UsersSystemTab>{
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       IconButton(
-                        icon: Icon(Icons.edit, color: Colors.blue),
+                        icon: const Icon(Icons.edit, color: Colors.blue),
                         onPressed: () async {
                           await Navigator.push(
                               context, MaterialPageRoute(
@@ -97,7 +102,7 @@ class _UsersSystemTabState extends State<UsersSystemTab>{
                         },
                       ),
                       IconButton(
-                        icon: Icon(Icons.delete, color: Colors.red),
+                        icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () {
                           _confirmDelete(user['id'], user['email']);
                         },
@@ -131,13 +136,13 @@ class _UsersSystemTabState extends State<UsersSystemTab>{
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
-              child: Text('Trở về'),
+              child: const Text('Trở về'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
-              child: Text('Xóa', style: TextStyle(color: Colors.red),),
+              child: const Text('Xóa', style: TextStyle(color: Colors.red),),
             ),
           ],
         );
@@ -154,7 +159,7 @@ class _UsersSystemTabState extends State<UsersSystemTab>{
       final result = await _userRepository.deleteUser(userId);
       if (result['success']) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Xóa người dùng thành công')),
+          const SnackBar(content: Text('Xóa người dùng thành công')),
         );
         // Cập nhật lại danh sách người dùng sau khi xóa
         await _refreshListUsers();

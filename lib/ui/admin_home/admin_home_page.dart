@@ -3,6 +3,7 @@ import 'package:clinic_management/data/events/authentication_event.dart';
 import 'package:clinic_management/ui/admin_home/clinics_tab/clinics_tab.dart';
 import 'package:clinic_management/ui/admin_home/handbook_tab/handbook_tab.dart';
 import 'package:clinic_management/ui/admin_home/specialties_tab/specialties_tab.dart';
+import 'package:clinic_management/ui/admin_home/users_system_tab/manage_doctors.dart';
 import 'package:clinic_management/ui/admin_home/users_system_tab/users_system_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -97,7 +98,17 @@ class _AdminHomePageState extends State<AdminHomePage> {
               Navigator.pop(context); //đóng drawer
             },
           ),
-          const Divider(), // Add a separator line
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.accessibility),
+            title: const Text('Manage Doctors'),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => ManageDoctors()
+              ));
+            },
+          ),
+          const Divider(),// Add a separator line
           ListTile(
             leading: const Icon(Icons.exit_to_app),
             title: const Text('Logout'),
