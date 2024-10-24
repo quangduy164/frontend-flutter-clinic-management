@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:clinic_management/data/repository/doctor_repository.dart';
+import 'package:clinic_management/ui/user_home/home_tab/detail_doctor.dart';
 import 'package:flutter/material.dart';
 
 import 'item_handbook_section.dart';
@@ -178,9 +179,13 @@ class _HomeTabState extends State<HomeTab>{
                     return Padding(
                       padding: const EdgeInsets.only(right: 10.0),
                       child: ItemOutstandingDoctorSection(
-                        function: () {},
+                        function: () {
+                          Navigator.push(context, MaterialPageRoute(
+                              builder: (context) => DetailDoctor(doctorId: doctor['id'],)
+                          ));
+                        },
                         image: image, // Có thể là null nếu k có dữ liệu
-                        text: '$position - $name',
+                        text: '$position, $name',
                       ),
                     );
                   }).toList(),
