@@ -73,8 +73,11 @@ class _DetailDoctorState extends State<DetailDoctor> {
           style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 5,),
-        Text('$_detailContentDoctor',
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5.0),
+          child: Text('$_detailContentDoctor',
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+          ),
         ),
       ],
     );
@@ -140,7 +143,7 @@ class _DetailDoctorState extends State<DetailDoctor> {
         _detailContentDoctor = doctor['Markdown']['content'] ?? '';
       });
     } catch (e) {
-      debugPrint('Lỗi khi tải avatar: $e');
+      debugPrint('Lỗi khi tải thông tin doctor: $e');
     }
   }
 }

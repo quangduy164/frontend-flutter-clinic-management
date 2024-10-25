@@ -37,7 +37,6 @@ class _HomeTabState extends State<HomeTab>{
     return Scaffold(
       body: Stack(
         children: [
-          const Divider(),
           _getBody()
         ],
       ),

@@ -9,17 +9,26 @@ class ManageDoctors extends StatefulWidget {
 }
 
 class _ManageDoctorsState extends State<ManageDoctors> {
-  final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _contentController = TextEditingController();
+  late TextEditingController _descriptionController = TextEditingController();
+  late TextEditingController _contentController = TextEditingController();
 
   late Future<List<Map<String, dynamic>>> futureGetAllDoctors;
   final DoctorRepository _doctorRepository = DoctorRepository();
   String? _selectedDoctorId; // Biến chọn doctorId
+  late String _action;//Biến chọn create/update data
 
   @override
   void initState() {
     futureGetAllDoctors = _doctorRepository.getAllDoctors();
+    _action = 'CREATE';
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _descriptionController.dispose();
+    _contentController.dispose();
+    super.dispose();
   }
 
   @override
@@ -119,6 +128,13 @@ class _ManageDoctorsState extends State<ManageDoctors> {
       onChanged: (value) {
         setState(() {
           _selectedDoctorId = value;
+          //Lấy description và content từ api
+          if (_selectedDoctorId != null) {
+            _getDetailInforDoctor(int.parse(_selectedDoctorId!));
+          } else {
+            _descriptionController.clear();//nếu k chọn thì clear controller
+            _contentController.clear();
+          }
         });
       },
     );
@@ -185,28 +201,29 @@ class _ManageDoctorsState extends State<ManageDoctors> {
   Widget _buttonSaveInforDoctor(){
     return ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.lightGreen,
+          backgroundColor: (_action == 'UPDATE') ? Colors.lightGreen : Colors.lightBlue,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
         ),
         onPressed: (){
-          _saveInforDoctor();
+          _saveInforDoctor(_action);
         },
-        child: const Text(
-          'Lưu thông tin',
-          style: TextStyle(fontSize: 16, color: Colors.white),
+        child: Text(
+          (_action == 'UPDATE') ? 'Lưu thông tin' : 'Tạo thông tin',
+          style: const TextStyle(fontSize: 16, color: Colors.white),
         )
     );
   }
 
-  void _saveInforDoctor() async {
+  void _saveInforDoctor(String action) async {
     // Gọi API để cập nhật người dùng ở đây
     try {
       final result = await _doctorRepository.saveInforDoctor(
           int.parse(_selectedDoctorId!),
           _contentController.text,
-          _descriptionController.text
+          _descriptionController.text,
+          _action
       );
 
       if (result['success']) {
@@ -222,6 +239,21 @@ class _ManageDoctorsState extends State<ManageDoctors> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
+    }
+  }
+
+  Future<void> _getDetailInforDoctor(int doctorId) async {
+    try {
+      // Gọi API lấy thông tin chi tiết doctor
+      final doctor = await DoctorRepository().getDetailDoctorById(doctorId);
+      // Cập nhật trạng thái bằng setState
+      setState(() {
+        _descriptionController = TextEditingController(text: doctor['Markdown']['description']);
+        _contentController = TextEditingController(text: doctor['Markdown']['content']);
+        _contentController.text.isNotEmpty ? _action = 'UPDATE' : _action = 'CREATE';
+      });
+    } catch (e) {
+      debugPrint('Lỗi khi tải thông tin doctor: $e');
     }
   }
 

@@ -56,7 +56,7 @@ class DoctorRepository{
 
   // Lưu thông tin doctor qua api
   Future<Map<String, dynamic>> saveInforDoctor(
-      int doctorId, String content, String? description) async {
+      int doctorId, String content, String? description, String action) async {
     final response = await http.post(
       Uri.parse('$apiUrl/save-infor-doctor'),
       headers: <String, String>{
@@ -66,6 +66,7 @@ class DoctorRepository{
         'doctorId': doctorId,
         'content': content.trim(),
         'description': description,
+        'action': action
       }),
     );
 
