@@ -213,6 +213,29 @@ class UserRepository {
     }
   }
 
+  //lấy thông tin các kiểu từ api
+  Future<List<Map<String, dynamic>>> getAllCode(String type) async {
+    final response = await http.get(
+      Uri.parse('$apiUrl/allcode?type=$type'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseBody = jsonDecode(response.body);
+      if (responseBody['errCode'] == 0) {
+        List<dynamic> allcode = responseBody['data']; //lấy danh sách các object
+        return List<Map<String, dynamic>>.from(
+            allcode); //chuyển danh sách allcode thành list các object
+      } else {
+        throw Exception('Failed to fetch allcode: ${responseBody['message']}');
+      }
+    } else {
+      throw Exception('Failed to fetch allcode');
+    }
+  }
+
   //Kiểm tra xem user đã đăng nhập chưa qua accessToken
   Future<bool> isSignIn() async {
     final accessToken = await getAccessToken();

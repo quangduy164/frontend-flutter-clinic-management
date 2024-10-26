@@ -1,4 +1,5 @@
 import 'package:clinic_management/data/repository/doctor_repository.dart';
+import 'package:clinic_management/data/repository/user_repository.dart';
 import 'package:flutter/material.dart';
 
 class ManageDoctorsSchedule extends StatefulWidget {
@@ -9,25 +10,25 @@ class ManageDoctorsSchedule extends StatefulWidget {
 }
 
 class _ManageDoctorsScheduleState extends State<ManageDoctorsSchedule> {
-  late TextEditingController _descriptionController = TextEditingController();
-  late TextEditingController _contentController = TextEditingController();
 
   late Future<List<Map<String, dynamic>>> futureGetAllDoctors;
+  List<Map<String, dynamic>> schedules = [];//thời gian lịch khám
+  bool isLoading = true; // Trạng thái loading
   final DoctorRepository _doctorRepository = DoctorRepository();
   String? _selectedDoctorId; // Biến chọn doctorId
+  String? _selectedDate;//biến chọn ngày
   late String _action;//Biến chọn create/update data
 
   @override
   void initState() {
     futureGetAllDoctors = _doctorRepository.getAllDoctors();
+    _fetchAllScheduleTime();
     _action = 'CREATE';
     super.initState();
   }
 
   @override
   void dispose() {
-    _descriptionController.dispose();
-    _contentController.dispose();
     super.dispose();
   }
 
@@ -86,7 +87,7 @@ class _ManageDoctorsScheduleState extends State<ManageDoctorsSchedule> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 10),
-          //xây dựng dropdownButton để chọn doctor dựa trên kết quả của Future là futureGetAllUsers
+          //xây dựng dropdownButton để chọn doctor dựa trên kết quả của Future là futureGetAllDoctors
           FutureBuilder<List<Map<String, dynamic>>>(
             future: futureGetAllDoctors,
             builder: (context, snapshot) {
@@ -101,11 +102,105 @@ class _ManageDoctorsScheduleState extends State<ManageDoctorsSchedule> {
             },
           ),
           const SizedBox(height: 15),
-          _doctorDescription(),
-          const SizedBox(height: 15),
-          _doctorDetailContent(),
-          const SizedBox(height: 15),
+          _buildSelectedDate(),
+          const SizedBox(height: 15,),
+          _buildAllScheduleTime(),
+          const SizedBox(height: 15,),
           _buttonSaveInforDoctor()
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAllScheduleTime() {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (schedules.isEmpty) {
+      return const Center(child: Text('Không có lịch khám nào.'));
+    }
+    return Container(
+      padding: const EdgeInsets.all(8), // Khoảng cách trong Container
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey, width: 1),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: GridView.builder(
+        shrinkWrap: true, // Thu gọn kích thước theo nội dung
+        physics: const NeverScrollableScrollPhysics(), // Tắt cuộn bên trong GridView
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2, // 2 phần tử mỗi hàng
+          mainAxisSpacing: 8, // Khoảng cách dọc giữa các hàng
+          crossAxisSpacing: 8, // Khoảng cách ngang giữa các phần tử
+          childAspectRatio: 3, // Tỉ lệ giữa chiều rộng và chiều cao của mỗi nút
+        ),
+        itemCount: schedules.length,
+        itemBuilder: (context, index) {
+          final schedule = schedules[index];
+          return TextButton(
+            onPressed: () {},
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.all(10),
+              shape: RoundedRectangleBorder(
+                side: const BorderSide(color: Colors.grey, width: 1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            child: Text(
+              schedule['valueEN'],
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildSelectedDate() {
+    return TextButton(
+      onPressed: () async {
+        final DateTime? pickedDate = await showDatePicker(
+          context: context,
+          initialDate: DateTime.now(),
+          firstDate: DateTime.now(),
+          lastDate: DateTime(2026),
+        );
+        if (pickedDate != null) {
+          setState(() {
+            // Format ngày thành chuỗi dễ đọc
+            _selectedDate = "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+          });
+        }
+      },
+      style: TextButton.styleFrom(
+        padding: const EdgeInsets.all(10), // Khoảng cách bên trong nút
+        shape: RoundedRectangleBorder(
+          side: const BorderSide(color: Colors.grey, width: 1), // Viền cho TextButton
+          borderRadius: BorderRadius.circular(10), // Bo góc
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween, // Căn chỉnh các phần tử trong dòng
+        children: [
+          const Text(
+            'Chọn ngày',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 15,
+              color: Colors.black,
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5), // Khoảng cách trong Container
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey, width: 1), // Viền cho Container
+              borderRadius: BorderRadius.circular(5), // Bo góc nhẹ
+            ),
+            child: Text(
+              _selectedDate ?? 'Chưa chọn ngày',
+              style: const TextStyle(color: Colors.black87),
+            ),
+          ),
         ],
       ),
     );
@@ -128,73 +223,8 @@ class _ManageDoctorsScheduleState extends State<ManageDoctorsSchedule> {
       onChanged: (value) {
         setState(() {
           _selectedDoctorId = value;
-          //Lấy description và content từ api
-          if (_selectedDoctorId != null) {
-            _getDetailInforDoctor(int.parse(_selectedDoctorId!));
-          } else {
-            _descriptionController.clear();//nếu k chọn thì clear controller
-            _contentController.clear();
-          }
         });
       },
-    );
-  }
-
-  Widget _doctorDescription() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Thông tin giới thiệu',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-        ),
-        const SizedBox(height: 5),
-        _buildScrollableTextField(_descriptionController),
-      ],
-    );
-  }
-
-  Widget _doctorDetailContent() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Thông tin chi tiết',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-        ),
-        const SizedBox(height: 5),
-        _buildScrollableTextField(_contentController),
-      ],
-    );
-  }
-
-  Widget _buildScrollableTextField(TextEditingController controller) {
-    return SizedBox(
-      height: 150, // Cố định chiều cao để tránh tràn
-      child: TextField(
-        controller: controller,
-        maxLines: null, // Cho phép nhiều dòng
-        expands: true, // Giúp TextField mở rộng bên trong SizedBox
-        textAlign: TextAlign.start, // Căn trái văn bản
-        textAlignVertical: TextAlignVertical.top, // Căn văn bản lên trên cùng
-        scrollPhysics: const BouncingScrollPhysics(),
-        decoration: InputDecoration(
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 15,
-            vertical: 15,
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Colors.grey, width: 1.0),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Colors.blue, width: 1.2),
-          ),
-          filled: true,
-          fillColor: Colors.white,
-        ),
-      ),
     );
   }
 
@@ -207,7 +237,6 @@ class _ManageDoctorsScheduleState extends State<ManageDoctorsSchedule> {
           ),
         ),
         onPressed: (){
-          _saveInforDoctor(_action);
         },
         child: Text(
           (_action == 'UPDATE') ? 'Lưu thông tin' : 'Tạo thông tin',
@@ -216,44 +245,20 @@ class _ManageDoctorsScheduleState extends State<ManageDoctorsSchedule> {
     );
   }
 
-  void _saveInforDoctor(String action) async {
-    // Gọi API để cập nhật người dùng ở đây
+  Future<void> _fetchAllScheduleTime() async {
     try {
-      final result = await _doctorRepository.saveInforDoctor(
-          int.parse(_selectedDoctorId!),
-          _contentController.text,
-          _descriptionController.text,
-          _action
-      );
-
-      if (result['success']) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Lưu thông tin bác sĩ thành công')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${result['message']}')),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
-    }
-  }
-
-  Future<void> _getDetailInforDoctor(int doctorId) async {
-    try {
-      // Gọi API lấy thông tin chi tiết doctor
-      final doctor = await DoctorRepository().getDetailDoctorById(doctorId);
-      // Cập nhật trạng thái bằng setState
+      List<Map<String, dynamic>> fetchedSchedules =
+      await UserRepository().getAllCode('TIME'); // Lấy tất cả lịch khám
       setState(() {
-        _descriptionController = TextEditingController(text: doctor['Markdown']['description']);
-        _contentController = TextEditingController(text: doctor['Markdown']['content']);
-        _contentController.text.isNotEmpty ? _action = 'UPDATE' : _action = 'CREATE';
+        schedules = fetchedSchedules;
       });
     } catch (e) {
-      debugPrint('Lỗi khi tải thông tin doctor: $e');
+      // Xử lý lỗi nếu cần thiết
+      debugPrint('Lỗi khi lấy danh sách lịch khám: $e');
+    } finally {
+      setState(() {
+        isLoading = false; // Hoàn tất việc load dữ liệu
+      });
     }
   }
 
@@ -261,6 +266,7 @@ class _ManageDoctorsScheduleState extends State<ManageDoctorsSchedule> {
   Future<void> _refreshListDoctors() async {
     setState(() {
       futureGetAllDoctors = _doctorRepository.getAllDoctors(); // Cập nhật lại future
+      _fetchAllScheduleTime();
     });
   }
 }
