@@ -1,33 +1,28 @@
 import 'package:clinic_management/data/blocs/authentication_bloc.dart';
 import 'package:clinic_management/data/events/authentication_event.dart';
-import 'package:clinic_management/ui/admin_home/clinics_tab/clinics_tab.dart';
-import 'package:clinic_management/ui/admin_home/handbook_tab/handbook_tab.dart';
-import 'package:clinic_management/ui/admin_home/specialties_tab/specialties_tab.dart';
-import 'package:clinic_management/ui/admin_home/users_system_tab/manage_doctors.dart';
-import 'package:clinic_management/ui/admin_home/users_system_tab/manage_doctors_schedule.dart';
-import 'package:clinic_management/ui/admin_home/users_system_tab/users_system_tab.dart';
+import 'package:clinic_management/ui/doctor_home/manage_clinic_tab/manage_clinic_tab.dart';
+import 'package:clinic_management/ui/doctor_home/manage_schedule_tab/manage_schedule_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class AdminHomePage extends StatefulWidget {
+class DoctorHomePage extends StatefulWidget {
+  final int doctorId;
   final String firstName;
 
-  const AdminHomePage({super.key, required this.firstName});
+  const DoctorHomePage({super.key,required this.doctorId, required this.firstName});
 
   @override
   State<StatefulWidget> createState() {
-    return _AdminHomePageState();
+    return _DoctorHomePageState();
   }
 }
 
-class _AdminHomePageState extends State<AdminHomePage> {
+class _DoctorHomePageState extends State<DoctorHomePage> {
   int _selectedIndex = 0; // Chỉ số tab hiện tại
 
   final List<Widget> _tabs = [
-    const UsersSystemTab(),
-    const ClinicsTab(),
-    const SpecialtiesTab(),
-    const HandbookTab(),
+    const ManageScheduleTab(),
+    const ManageClinicTab()
   ];
 
   @override
@@ -48,10 +43,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
         body: _tabs[_selectedIndex], //Hiển thị tab hiện tại
         bottomNavigationBar: BottomNavigationBar(
           items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Users System'),
-            BottomNavigationBarItem(icon: Icon(Icons.meeting_room), label: 'Clinics'),
-            BottomNavigationBarItem(icon: Icon(Icons.star), label: 'Specialties'),
-            BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Handbook'),
+            BottomNavigationBarItem(icon: Icon(Icons.more_time), label: 'Manage Schedule'),
+            BottomNavigationBarItem(icon: Icon(Icons.meeting_room), label: 'Manage Clinics'),
           ],
           currentIndex: _selectedIndex, //chọn tab
           onTap: _onItemTapped, //khi nhấn thì setstate
@@ -97,26 +90,6 @@ class _AdminHomePageState extends State<AdminHomePage> {
             title: const Text('Home'),
             onTap: () {
               Navigator.pop(context); //đóng drawer
-            },
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.accessibility),
-            title: const Text('Manage Doctors'),
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => const ManageDoctors()
-              ));
-            },
-          ),
-          const Divider(),// Add a separator line
-          ListTile(
-            leading: const Icon(Icons.more_time),
-            title: const Text('Manage Doctors Schedule'),
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => const ManageDoctorsSchedule()
-              ));
             },
           ),
           const Divider(),

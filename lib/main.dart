@@ -4,6 +4,7 @@ import 'package:clinic_management/data/blocs/simple_bloc_observer.dart';
 import 'package:clinic_management/data/events/authentication_event.dart';
 import 'package:clinic_management/data/repository/user_repository.dart';
 import 'package:clinic_management/data/states/authentication_state.dart';
+import 'package:clinic_management/ui/doctor_home/doctor_home_page.dart';
 import 'package:clinic_management/ui/login/login_page.dart';
 import 'package:clinic_management/ui/splash/splash_page.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +44,10 @@ class MyApp extends StatelessWidget {
             if (authenticationState is AuthenticationStateSuccess) {
               if (authenticationState.role == 'R1') {
                 return AdminHomePage(firstName: authenticationState.firstName,); // Trang chính cho Admin
+              } else if(authenticationState.role == 'R2'){
+                return DoctorHomePage(
+                  doctorId: authenticationState.userId,
+                  firstName: authenticationState.firstName,); // Trang chính cho User
               } else {
                 return UserHomePage(
                   userId: authenticationState.userId,
