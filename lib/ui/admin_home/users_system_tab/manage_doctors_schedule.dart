@@ -1,6 +1,7 @@
 import 'package:clinic_management/data/repository/doctor_repository.dart';
 import 'package:clinic_management/data/repository/user_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ManageDoctorsSchedule extends StatefulWidget {
   const ManageDoctorsSchedule({super.key});
@@ -13,17 +14,16 @@ class _ManageDoctorsScheduleState extends State<ManageDoctorsSchedule> {
 
   late Future<List<Map<String, dynamic>>> futureGetAllDoctors;
   List<Map<String, dynamic>> schedules = [];//thời gian lịch khám
+  List<Map<String, dynamic>> saveSchedules = [];//Lưu thời gian lịch khám
   bool isLoading = true; // Trạng thái loading
   final DoctorRepository _doctorRepository = DoctorRepository();
   String? _selectedDoctorId; // Biến chọn doctorId
-  String? _selectedDate;//biến chọn ngày
-  late String _action;//Biến chọn create/update data
+  DateTime? _selectedDate;//biến chọn ngày
 
   @override
   void initState() {
     futureGetAllDoctors = _doctorRepository.getAllDoctors();
     _fetchAllScheduleTime();
-    _action = 'CREATE';
     super.initState();
   }
 
@@ -137,9 +137,16 @@ class _ManageDoctorsScheduleState extends State<ManageDoctorsSchedule> {
         itemCount: schedules.length,
         itemBuilder: (context, index) {
           final schedule = schedules[index];
+          bool isSelected = schedules[index]['isSelected'] ?? false; // Lấy trạng thái isSelected
           return TextButton(
-            onPressed: () {},
+            onPressed: () {
+              // Chuyển đổi trạng thái isSelected
+              setState(() {
+                schedules[index]['isSelected'] = !isSelected;
+              });
+            },
             style: TextButton.styleFrom(
+              backgroundColor: isSelected ? Colors.lightBlueAccent : Colors.white,
               padding: const EdgeInsets.all(10),
               shape: RoundedRectangleBorder(
                 side: const BorderSide(color: Colors.grey, width: 1),
@@ -148,7 +155,10 @@ class _ManageDoctorsScheduleState extends State<ManageDoctorsSchedule> {
             ),
             child: Text(
               schedule['valueEN'],
-              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+              style: TextStyle(
+                  fontSize: 12, fontWeight: FontWeight.w500,
+                  color: isSelected ? Colors.white : Colors.black
+              ),
             ),
           );
         },
@@ -168,7 +178,7 @@ class _ManageDoctorsScheduleState extends State<ManageDoctorsSchedule> {
         if (pickedDate != null) {
           setState(() {
             // Format ngày thành chuỗi dễ đọc
-            _selectedDate = "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+            _selectedDate = pickedDate;// Lưu dưới dạng DateTime
           });
         }
       },
@@ -197,7 +207,9 @@ class _ManageDoctorsScheduleState extends State<ManageDoctorsSchedule> {
               borderRadius: BorderRadius.circular(5), // Bo góc nhẹ
             ),
             child: Text(
-              _selectedDate ?? 'Chưa chọn ngày',
+              _selectedDate != null
+                  ? _formatDate(_selectedDate!)  // Hiển thị dạng DD/MM/YYYY
+                  : 'Chưa chọn ngày',
               style: const TextStyle(color: Colors.black87),
             ),
           ),
@@ -231,15 +243,16 @@ class _ManageDoctorsScheduleState extends State<ManageDoctorsSchedule> {
   Widget _buttonSaveInforDoctor(){
     return ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: (_action == 'UPDATE') ? Colors.lightGreen : Colors.lightBlue,
+          backgroundColor: Colors.lightGreen,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
         ),
         onPressed: (){
+          _saveBulkCreateSchedule();
         },
-        child: Text(
-          (_action == 'UPDATE') ? 'Lưu thông tin' : 'Tạo thông tin',
+        child: const Text(
+          'Lưu thông tin',
           style: const TextStyle(fontSize: 16, color: Colors.white),
         )
     );
@@ -250,7 +263,13 @@ class _ManageDoctorsScheduleState extends State<ManageDoctorsSchedule> {
       List<Map<String, dynamic>> fetchedSchedules =
       await UserRepository().getAllCode('TIME'); // Lấy tất cả lịch khám
       setState(() {
-        schedules = fetchedSchedules;
+        //thêm trường isSelected cho mỗi schedule
+        schedules = fetchedSchedules.map((schedule){
+          return {
+            ...schedule,
+            'isSelected': false,
+          };
+        }).toList();
       });
     } catch (e) {
       // Xử lý lỗi nếu cần thiết
@@ -260,6 +279,60 @@ class _ManageDoctorsScheduleState extends State<ManageDoctorsSchedule> {
         isLoading = false; // Hoàn tất việc load dữ liệu
       });
     }
+  }
+
+  void _saveBulkCreateSchedule() async {
+    if (_selectedDoctorId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Vui lòng chọn bác sĩ')),
+      );
+      return;
+    }
+
+    if (_selectedDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Vui lòng chọn ngày')),
+      );
+      return;
+    }
+
+    saveSchedules.clear(); // Đảm bảo danh sách rỗng trước khi thêm mới
+
+    // Thêm lịch khám đã chọn vào danh sách
+    schedules.forEach((schedule) {
+      if (schedule['isSelected'] ?? false) {
+        saveSchedules.add({
+          'doctorId': _selectedDoctorId,
+          'date': DateFormat('yyyy-MM-dd').format(_selectedDate!), //Định dạng lại ngày
+          'timeType': schedule['keyMap'],
+        });
+      }
+    });
+
+    try {
+      final result = await _doctorRepository.saveBulkCreateSchedule(saveSchedules);
+
+      if (result['success']) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Lưu thông tin lịch khám thành công')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${result['message']}')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
+
+  //format DateTime thành DD/mm/yyyy
+  String _formatDate(DateTime date) {
+    return "${date.day.toString().padLeft(2, '0')}/"
+        "${date.month.toString().padLeft(2, '0')}/"
+        "${date.year}";
   }
 
   // Làm mới danh sách user
