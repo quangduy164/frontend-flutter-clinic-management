@@ -101,7 +101,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
           ),
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.accessibility),
+            leading: const Icon(Icons.manage_accounts),
             title: const Text('Manage Doctors'),
             onTap: () {
               Navigator.push(context, MaterialPageRoute(
@@ -111,7 +111,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
           ),
           const Divider(),// Add a separator line
           ListTile(
-            leading: const Icon(Icons.more_time),
+            leading: const Icon(Icons.calendar_month),
             title: const Text('Manage Doctors Schedule'),
             onTap: () {
               Navigator.push(context, MaterialPageRoute(

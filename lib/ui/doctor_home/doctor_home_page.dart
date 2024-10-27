@@ -43,7 +43,7 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
         body: _tabs[_selectedIndex], //Hiển thị tab hiện tại
         bottomNavigationBar: BottomNavigationBar(
           items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.more_time), label: 'Manage Schedule'),
+            BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: 'Manage Schedule'),
             BottomNavigationBarItem(icon: Icon(Icons.meeting_room), label: 'Manage Clinics'),
           ],
           currentIndex: _selectedIndex, //chọn tab
@@ -75,7 +75,7 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
             child: DrawerHeader(
               decoration: const BoxDecoration(color: Colors.lightBlueAccent),
               child: ListTile(
-                leading: const Icon(Icons.admin_panel_settings),
+                leading: const Icon(Icons.perm_identity),
                 title: Text(widget.firstName,
                     style: const TextStyle(fontWeight: FontWeight.bold)),
                 onTap: () {

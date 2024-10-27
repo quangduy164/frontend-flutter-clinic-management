@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:clinic_management/data/repository/doctor_repository.dart';
-import 'package:clinic_management/ui/user_home/home_tab/doctor/doctor_schedule.dart';
+import 'package:clinic_management/ui/user_home/home_tab/doctor/doctor_schedule_component.dart';
 import 'package:flutter/material.dart';
 
 class DetailDoctor extends StatefulWidget {
@@ -58,7 +58,7 @@ class _DetailDoctorState extends State<DetailDoctor> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _doctorDescription(),
-              DoctorSchedule(doctorId: widget.doctorId),
+              DoctorScheduleComponent(doctorId: widget.doctorId),
               _doctorDetailContent()
             ],
           ),

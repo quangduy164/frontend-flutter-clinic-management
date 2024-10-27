@@ -49,10 +49,10 @@ class _UserHomePageState extends State<UserHomePage> {
         body: _tabs[_selectedIndex], //Hiển thị tab hiện tại
         bottomNavigationBar: BottomNavigationBar(
           items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-            BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'Notification'),
-            BottomNavigationBarItem(icon: Icon(Icons.schedule), label: 'Schedule'),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Account'),
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Trang chủ'),
+            BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'Thông báo'),
+            BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: 'Lịch hẹn'),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Cá nhân'),
           ],
           currentIndex: _selectedIndex, //chọn tab
           onTap: _onItemTapped, //khi nhấn thì setstate
