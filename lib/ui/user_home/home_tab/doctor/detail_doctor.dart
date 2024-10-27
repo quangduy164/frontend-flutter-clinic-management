@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:clinic_management/data/repository/doctor_repository.dart';
+import 'package:clinic_management/ui/user_home/home_tab/doctor/doctor_schedule.dart';
 import 'package:flutter/material.dart';
 
 class DetailDoctor extends StatefulWidget {
@@ -54,8 +55,10 @@ class _DetailDoctorState extends State<DetailDoctor> {
           padding: const EdgeInsets.all(10.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _doctorDescription(),
+              DoctorSchedule(doctorId: widget.doctorId),
               _doctorDetailContent()
             ],
           ),
@@ -70,7 +73,7 @@ class _DetailDoctorState extends State<DetailDoctor> {
       children: [
         const Divider(),
         const Text('Khám và điều trị',
-          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 5,),
         Padding(

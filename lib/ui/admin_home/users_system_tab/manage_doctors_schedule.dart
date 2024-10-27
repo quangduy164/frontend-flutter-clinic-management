@@ -303,7 +303,7 @@ class _ManageDoctorsScheduleState extends State<ManageDoctorsSchedule> {
       if (schedule['isSelected'] ?? false) {
         saveSchedules.add({
           'doctorId': _selectedDoctorId,
-          'date': DateFormat('yyyy-MM-dd').format(_selectedDate!), //Định dạng lại ngày
+          'date': DateFormat('dd/MM/yyyy').format(_selectedDate!), //Định dạng lại ngày
           'timeType': schedule['keyMap'],
         });
       }

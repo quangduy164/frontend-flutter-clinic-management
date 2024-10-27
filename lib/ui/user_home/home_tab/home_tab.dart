@@ -1,12 +1,12 @@
 import 'dart:typed_data';
 
 import 'package:clinic_management/data/repository/doctor_repository.dart';
-import 'package:clinic_management/ui/user_home/home_tab/detail_doctor.dart';
+import 'package:clinic_management/ui/user_home/home_tab/doctor/detail_doctor.dart';
 import 'package:flutter/material.dart';
 
+import 'doctor/item_outstanding_doctor_section.dart';
 import 'item_handbook_section.dart';
 import 'item_medical_facility_section.dart';
-import 'item_outstanding_doctor_section.dart';
 import 'item_service_section.dart';
 import 'item_specialty_section.dart';
 
