@@ -1,4 +1,5 @@
 import 'package:clinic_management/data/repository/doctor_repository.dart';
+import 'package:clinic_management/data/repository/user_repository.dart';
 import 'package:flutter/material.dart';
 
 class ManageDoctors extends StatefulWidget {
@@ -11,15 +12,29 @@ class ManageDoctors extends StatefulWidget {
 class _ManageDoctorsState extends State<ManageDoctors> {
   late TextEditingController _descriptionController = TextEditingController();
   late TextEditingController _contentController = TextEditingController();
+  late TextEditingController _nameClinicController = TextEditingController();
+  late TextEditingController _addressClinicController = TextEditingController();
+  late TextEditingController _noteController = TextEditingController();
 
   late Future<List<Map<String, dynamic>>> futureGetAllDoctors;
-  final DoctorRepository _doctorRepository = DoctorRepository();
+  late Future<List<Map<String, dynamic>>> futureGetAllPrices;
+  late Future<List<Map<String, dynamic>>> futureGetAllPayments;
+  late Future<List<Map<String, dynamic>>> futureGetAllProvinces;
+
   String? _selectedDoctorId; // Biến chọn doctorId
+  String? _selectedPrice;//Biến chọn giá khám
+  String? _selectedPayment;//Biến chọn phương thức thanh toán
+  String? _selectedProvince;//Biến chọn tỉnh
+
   late String _action;//Biến chọn create/update data
 
   @override
   void initState() {
-    futureGetAllDoctors = _doctorRepository.getAllDoctors();
+    futureGetAllDoctors = DoctorRepository().getAllDoctors();
+    futureGetAllPrices = UserRepository().getAllCode('PRICE'); // Lấy tất cả giá khám
+    futureGetAllPayments = UserRepository().getAllCode('PAYMENT');
+    futureGetAllProvinces = UserRepository().getAllCode('PROVINCE');
+
     _action = 'CREATE';
     super.initState();
   }
@@ -101,12 +116,94 @@ class _ManageDoctorsState extends State<ManageDoctors> {
             },
           ),
           const SizedBox(height: 15),
-          _doctorDescription(),
+          _buildSelectedDoctorInfor(futureGetAllPrices, 'Chọn giá:', 'selectedPrice'),
+          const SizedBox(height: 5,),
+          _buildSelectedDoctorInfor(futureGetAllPayments, 'Chọn phương thức thanh toán:', 'selectedPayment'),
+          const SizedBox(height: 5,),
+          _buildSelectedDoctorInfor(futureGetAllProvinces, 'Chọn tỉnh thành:', 'selectedProvince'),
+          const SizedBox(height: 5),
+          _doctorDetailContent('Tên phòng khám', _nameClinicController, 50),
+          _doctorDetailContent('Địa chỉ phòng khám', _addressClinicController, 50),
+          _doctorDetailContent('Ghi chú', _noteController, 50),
           const SizedBox(height: 15),
-          _doctorDetailContent(),
+          _doctorDetailContent('Thông tin giới thiệu', _descriptionController, 150),
+          _doctorDetailContent('Thông tin chi tiết', _contentController, 150),
           const SizedBox(height: 15),
           _buttonSaveInforDoctor()
         ],
+      ),
+    );
+  }
+
+  Widget _buildSelectedDoctorInfor(
+      Future<List<Map<String, dynamic>>> futureGetAllInfors,
+      String title, String selectedInfor){
+    return Row(
+      children: [
+        Text(title,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        ),
+        const SizedBox(width: 10),
+        FutureBuilder<List<Map<String, dynamic>>>(
+          future: futureGetAllInfors,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Text('Lỗi: ${snapshot.error}');
+            } else {
+              final infors = snapshot.data!;
+              return _buildDropdownButtonDoctorInfor(infors, selectedInfor);
+            }
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDropdownButtonDoctorInfor(List<Map<String, dynamic>> infors, String? selectedInfor) {
+    return Expanded(
+      child: DropdownButtonFormField<String>(
+        decoration: const InputDecoration(
+          isDense: true,
+          contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.black,
+              width: 0.5,
+            ),
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.black,
+              width: 0.5,
+            ),
+          ),
+        ),
+        //Kiểm tra và khởi tạo giá trị hợp lệ hoặc null cho selectedInfor tránh lỗi dropdown ở trạng thái chưa chọn
+        value: selectedInfor != null && infors.any((infor) => infor['keyMap'] == selectedInfor)
+            ? selectedInfor
+            : null,
+        items: infors.map((infor) {
+          return DropdownMenuItem<String>(
+            value: infor['keyMap'],
+            child: Center(child: Text('${infor['valueVI']}', textAlign: TextAlign.center,)), // Hiển thị infor api
+          );
+        }).toList(),
+        onChanged: (value) {
+          setState(() {
+            if(selectedInfor == 'selectedPrice'){
+              _selectedPrice = value;// Cập nhật biến _selectedPrice
+            } else if(selectedInfor == 'selectedPayment'){
+              _selectedPayment = value;
+            } else if(selectedInfor == 'selectedProvince'){
+              _selectedProvince = value;
+            }
+          });
+        },
+        validator: (value) => value == null ? 'Vui lòng chọn' : null, // Kiểm tra nếu chưa chọn
+        alignment: Alignment.center, // Căn giữa toàn bộ dropdown
+        isExpanded: true, // Giúp dropdown chiếm toàn bộ chiều rộng
       ),
     );
   }
@@ -140,37 +237,23 @@ class _ManageDoctorsState extends State<ManageDoctors> {
     );
   }
 
-  Widget _doctorDescription() {
+  Widget _doctorDetailContent(String title, TextEditingController controller, double heightTextField) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Thông tin giới thiệu',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        const SizedBox(height: 5,),
+        Text(title,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
         ),
         const SizedBox(height: 5),
-        _buildScrollableTextField(_descriptionController),
+        _buildScrollableTextField(controller, heightTextField),
       ],
     );
   }
 
-  Widget _doctorDetailContent() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Thông tin chi tiết',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-        ),
-        const SizedBox(height: 5),
-        _buildScrollableTextField(_contentController),
-      ],
-    );
-  }
-
-  Widget _buildScrollableTextField(TextEditingController controller) {
+  Widget _buildScrollableTextField(TextEditingController controller, double heightTextField) {
     return SizedBox(
-      height: 150, // Cố định chiều cao để tránh tràn
+      height: heightTextField, // Cố định chiều cao để tránh tràn
       child: TextField(
         controller: controller,
         maxLines: null, // Cho phép nhiều dòng
@@ -219,11 +302,17 @@ class _ManageDoctorsState extends State<ManageDoctors> {
   void _saveInforDoctor(String action) async {
     // Gọi API để cập nhật người dùng ở đây
     try {
-      final result = await _doctorRepository.saveInforDoctor(
+      final result = await DoctorRepository().saveInforDoctor(
           int.parse(_selectedDoctorId!),
           _contentController.text,
           _descriptionController.text,
-          _action
+          _action,
+        _selectedPrice!,
+        _selectedPayment!,
+        _selectedProvince!,
+        _nameClinicController.text,
+        _addressClinicController.text,
+        _noteController.text
       );
 
       if (result['success']) {
@@ -260,7 +349,9 @@ class _ManageDoctorsState extends State<ManageDoctors> {
   // Làm mới danh sách user
   Future<void> _refreshListDoctors() async {
     setState(() {
-      futureGetAllDoctors = _doctorRepository.getAllDoctors(); // Cập nhật lại future
+      futureGetAllDoctors = DoctorRepository().getAllDoctors(); // Cập nhật lại future
+      futureGetAllPrices = UserRepository().getAllCode('PRICE');
+      futureGetAllPayments = UserRepository().getAllCode('PAYMENT');
     });
   }
 }

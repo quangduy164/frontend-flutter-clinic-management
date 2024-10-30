@@ -55,7 +55,9 @@ class DoctorRepository {
 
   // Lưu thông tin doctor qua api
   Future<Map<String, dynamic>> saveInforDoctor(
-      int doctorId, String content, String? description, String action) async {
+      int doctorId, String content, String? description, String action,
+      String selectedPrice, String selectedPayment, String selectedProvince,
+      String nameClinic, String addressClinic, String? note) async {
     final response = await http.post(
       Uri.parse('$apiUrl/save-infor-doctor'),
       headers: <String, String>{
@@ -65,7 +67,13 @@ class DoctorRepository {
         'doctorId': doctorId,
         'content': content.trim(),
         'description': description,
-        'action': action
+        'action': action,
+        'selectedPrice': selectedPrice.trim(),
+        'selectedPayment': selectedPayment.trim(),
+        'selectedProvince': selectedProvince.trim(),
+        'nameClinic': nameClinic.trim(),
+        'addressClinic': addressClinic.trim(),
+        'note': note
       }),
     );
 
@@ -73,9 +81,7 @@ class DoctorRepository {
       // Xử lý phản hồi từ API
       //chuyển phản hồi JSON thành Map
       final Map<String, dynamic> responseBody = jsonDecode(response.body);
-      print('-------------------------------------------------------');
-      print(responseBody);
-      print(responseBody['errCode']);
+
       if (responseBody['errCode'] == 0) {
         return {'success': true, 'message': responseBody['message']};
       } else {
