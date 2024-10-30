@@ -41,6 +41,9 @@ class _ManageDoctorsState extends State<ManageDoctors> {
 
   @override
   void dispose() {
+    _nameClinicController.dispose();
+    _addressClinicController.dispose();
+    _noteController.dispose();
     _descriptionController.dispose();
     _contentController.dispose();
     super.dispose();
@@ -181,13 +184,19 @@ class _ManageDoctorsState extends State<ManageDoctors> {
           ),
         ),
         //Kiểm tra và khởi tạo giá trị hợp lệ hoặc null cho selectedInfor tránh lỗi dropdown ở trạng thái chưa chọn
-        value: selectedInfor != null && infors.any((infor) => infor['keyMap'] == selectedInfor)
-            ? selectedInfor
-            : null,
+        value: selectedInfor == 'selectedPrice'
+            ? _selectedPrice
+            : selectedInfor == 'selectedPayment'
+            ? _selectedPayment
+            : _selectedProvince, // Gán đúng giá trị
         items: infors.map((infor) {
           return DropdownMenuItem<String>(
             value: infor['keyMap'],
-            child: Center(child: Text('${infor['valueVI']}', textAlign: TextAlign.center,)), // Hiển thị infor api
+            child: Center(
+                child: selectedInfor == 'selectedPrice'
+                    ? Text('${infor['valueVI']} VND', textAlign: TextAlign.center,)
+                    : Text('${infor['valueVI']}', textAlign: TextAlign.center,)
+            ), // Hiển thị infor api
           );
         }).toList(),
         onChanged: (value) {
@@ -229,6 +238,9 @@ class _ManageDoctorsState extends State<ManageDoctors> {
           if (_selectedDoctorId != null) {
             _getDetailInforDoctor(int.parse(_selectedDoctorId!));
           } else {
+            _nameClinicController.clear();
+            _addressClinicController.clear();
+            _noteController.clear();
             _descriptionController.clear();//nếu k chọn thì clear controller
             _contentController.clear();
           }
@@ -337,8 +349,18 @@ class _ManageDoctorsState extends State<ManageDoctors> {
       final doctor = await DoctorRepository().getDetailDoctorById(doctorId);
       // Cập nhật trạng thái bằng setState
       setState(() {
-        _descriptionController = TextEditingController(text: doctor['Markdown']['description']);
-        _contentController = TextEditingController(text: doctor['Markdown']['content']);
+        // Sử dụng keyMap để đảm bảo đúng giá trị cho dropdown
+        _selectedPrice = doctor['Doctor_Infor']['priceId'];
+        _selectedPayment = doctor['Doctor_Infor']['paymentId'];
+        _selectedProvince = doctor['Doctor_Infor']['provinceId'];
+
+        // Gán trực tiếp vào controller
+        _nameClinicController.text = doctor['Doctor_Infor']['nameClinic'] ?? '';
+        _addressClinicController.text = doctor['Doctor_Infor']['addressClinic'] ?? '';
+        _noteController.text = doctor['Doctor_Infor']['note'] ?? '';
+        _descriptionController.text = doctor['Markdown']['description'] ?? '';
+        _contentController.text = doctor['Markdown']['content'] ?? '';
+
         _contentController.text.isNotEmpty ? _action = 'UPDATE' : _action = 'CREATE';
       });
     } catch (e) {
