@@ -85,13 +85,13 @@ class _DoctorScheduleComponentState extends State<DoctorScheduleComponent> {
                 style: TextButton.styleFrom(
                   backgroundColor: Colors.grey.withOpacity(0.3),
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  shape: RoundedRectangleBorder(
+                  shape: const RoundedRectangleBorder(
                     side: BorderSide.none
                   ),
                 ),
                 child: Text(
                   schedule['timeTypeData']['valueVi'],
-                  style: TextStyle(
+                  style: const TextStyle(
                       fontSize: 12, fontWeight: FontWeight.w500,
                       color: Colors.black
                   ),

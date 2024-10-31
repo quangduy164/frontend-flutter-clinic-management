@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:clinic_management/data/repository/doctor_repository.dart';
+import 'package:clinic_management/ui/user_home/home_tab/doctor/doctor_extra_info_component.dart';
 import 'package:clinic_management/ui/user_home/home_tab/doctor/doctor_schedule_component.dart';
 import 'package:flutter/material.dart';
 
@@ -52,13 +53,14 @@ class _DetailDoctorState extends State<DetailDoctor> {
     return ListView(
       children: [
         Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(8.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _doctorDescription(),
               DoctorScheduleComponent(doctorId: widget.doctorId),
+              DoctorExtraInfoComponent(doctorId: widget.doctorId),
               _doctorDetailContent()
             ],
           ),
