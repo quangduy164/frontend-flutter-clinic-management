@@ -1,3 +1,4 @@
+import 'package:clinic_management/data/repository/doctor_repository.dart';
 import 'package:flutter/material.dart';
 
 class DoctorExtraInfoComponent extends StatefulWidget {
@@ -12,11 +13,18 @@ class DoctorExtraInfoComponent extends StatefulWidget {
 }
 
 class _DoctorExtraInfoComponentState extends State<DoctorExtraInfoComponent> {
+  String? _nameClinc; //tên phòng khám
+  String? _addressClinic;
+  String? _province;
+  String? _price;
+  String? _payment;
+  String? _note;
   bool isShowDetailInfor = false; //chưa nhấn xem chi tiết
   bool isLoading = true; // Trạng thái loading
 
   @override
   void initState() {
+    _fetchExtraInforDoctorById();
     super.initState();
   }
 
@@ -28,16 +36,13 @@ class _DoctorExtraInfoComponentState extends State<DoctorExtraInfoComponent> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Divider(thickness: 0.5), // Giảm độ dày và khoảng cách
+          const Divider(thickness: 0.5), // Giảm độ dày
           const Text('ĐỊA CHỈ KHÁM',
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                   color: Colors.black54)),
-          Text('Phòng khám đa khoa meditec',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-          Text('52 Bà Triệu - Hoàn Kiếm - Hà nội',
-              style: TextStyle(fontSize: 14)),
+          _buildAddressClinic(),
           const Divider(thickness: 0.5), // Giảm độ dày
           isShowDetailInfor ? _buildDetailDoctorPrice() : _buildDoctorPrice()
         ],
@@ -45,7 +50,31 @@ class _DoctorExtraInfoComponentState extends State<DoctorExtraInfoComponent> {
     );
   }
 
+  Widget _buildAddressClinic(){
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (_nameClinc == null || _nameClinc!.isEmpty) {
+      return const Center(child: Text('Chưa có thông tin địa chỉ.'));
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(_nameClinc ?? '',
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+        Text(_addressClinic ?? '',
+            style: const TextStyle(fontSize: 14)),
+      ],
+    );
+  }
+
   Widget _buildDoctorPrice() {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (_price == null || _price!.isEmpty) {
+      return const Center(child: Text('Chưa có thông tin giá khám.'));
+    }
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -57,9 +86,9 @@ class _DoctorExtraInfoComponentState extends State<DoctorExtraInfoComponent> {
       const SizedBox(
         width: 5,
       ),
-      const Text(
-        '500000đ',
-        style: TextStyle(fontSize: 14),
+      Text(
+        '${_price ?? ''}đ',
+        style: const TextStyle(fontSize: 14),
       ),
       SizedBox(
         height: 35,
@@ -79,6 +108,12 @@ class _DoctorExtraInfoComponentState extends State<DoctorExtraInfoComponent> {
   }
 
   Widget _buildDetailDoctorPrice() {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (_price == null || _price!.isEmpty) {
+      return const Center(child: Text('Chưa có thông tin giá khám.'));
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -97,19 +132,24 @@ class _DoctorExtraInfoComponentState extends State<DoctorExtraInfoComponent> {
               width: 0.5, // Độ dày của viền
             ),
           ),
-          child: Row(
+          child: Wrap(
             children: [
-              const Text(
-                'Giá khám:',
-                style: TextStyle(fontSize: 14),
+              Row(
+                children: [
+                  const Text(
+                    'Giá khám:',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                  const Spacer(),
+                  Text(
+                    '${_price ?? ''}đ',
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                ],
               ),
-              const Spacer(),
-              Text(
-                '500000đ',
-                style: TextStyle(fontSize: 14),
-              ),
+              Text(_note ?? '', style: const TextStyle(fontSize: 13, color: Colors.black54))
             ],
-          ),
+          )
         ),
         const SizedBox(
           height: 5,
@@ -123,9 +163,14 @@ class _DoctorExtraInfoComponentState extends State<DoctorExtraInfoComponent> {
               width: 0.5, // Độ dày của viền
             ),
           ),
-          child: const Text(
-              'Phòng khám có hình thức thanh toán chi phí tính bằng tiền mặt và ATM',
-              style: TextStyle(fontSize: 14)),
+          child: Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            children: [
+              Text(
+                  'Phòng khám có hình thức thanh toán chi phí tính bằng ${_payment ?? ''}',
+                  style: const TextStyle(fontSize: 14)),
+            ],
+          ),
         ),
         Align(
           alignment: Alignment.centerRight,
@@ -146,5 +191,28 @@ class _DoctorExtraInfoComponentState extends State<DoctorExtraInfoComponent> {
         )
       ],
     );
+  }
+
+  Future<void> _fetchExtraInforDoctorById() async {
+    try {
+      // Lấy tất cả lịch khám theo ngày
+      Map<String, dynamic> fetchedExtraInfor =
+      await DoctorRepository().getExtraInforDoctorById(widget.doctorId);
+      setState(() {
+        _nameClinc = fetchedExtraInfor['nameClinic'] ?? '';
+        _addressClinic = fetchedExtraInfor['addressClinic'] ?? '';
+        _province = fetchedExtraInfor['provinceTypeData']['valueVi'] ?? '';
+        _price = fetchedExtraInfor['priceTypeData']['valueVi'] ?? '';
+        _payment = fetchedExtraInfor['paymentTypeData']['valueVi'] ?? '';
+        _note = fetchedExtraInfor['note'] ?? '';
+      });
+    } catch (e) {
+      // Xử lý lỗi nếu cần thiết
+      debugPrint('Lỗi khi lấy danh sách lịch khám: $e');
+    } finally {
+      setState(() {
+        isLoading = false; // Hoàn tất việc load dữ liệu
+      });
+    }
   }
 }

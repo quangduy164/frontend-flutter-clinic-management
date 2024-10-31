@@ -163,4 +163,26 @@ class DoctorRepository {
     }
   }
 
+  //lấy thông tin thêm của bác sĩ:địa chỉ, giá khám, payment từ API
+  Future<Map<String, dynamic>> getExtraInforDoctorById(int doctorId) async {
+    final response = await http.get(
+      Uri.parse('$apiUrl/get-extra-infor-doctor-by-id?doctorId=${doctorId}'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseBody = jsonDecode(response.body);
+      if (responseBody['errCode'] == 0) {
+        return responseBody['data']; // Trả về object data
+      } else {
+        throw Exception(
+            'Failed to fetch extra infor doctor: ${responseBody['message']}');
+      }
+    } else {
+      throw Exception('Failed to fetch extra infor doctor');
+    }
+  }
+
 }
