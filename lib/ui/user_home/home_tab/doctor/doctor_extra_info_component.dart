@@ -62,7 +62,7 @@ class _DoctorExtraInfoComponentState extends State<DoctorExtraInfoComponent> {
       children: [
         Text(_nameClinc ?? '',
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-        Text(_addressClinic ?? '',
+        Text( '${_addressClinic ?? ''}, ${_province ?? ''}',
             style: const TextStyle(fontSize: 14)),
       ],
     );

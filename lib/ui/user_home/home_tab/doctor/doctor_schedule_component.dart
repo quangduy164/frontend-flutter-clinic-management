@@ -1,4 +1,5 @@
 import 'package:clinic_management/data/repository/doctor_repository.dart';
+import 'package:clinic_management/ui/user_home/home_tab/doctor/booking_modal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; //để định dạng ngày
@@ -81,6 +82,9 @@ class _DoctorScheduleComponentState extends State<DoctorScheduleComponent> {
               width: 100,
               child: TextButton(
                 onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => BookingModal(doctorId: widget.doctorId,)
+                  ));
                 },
                 style: TextButton.styleFrom(
                   backgroundColor: Colors.grey.withOpacity(0.3),

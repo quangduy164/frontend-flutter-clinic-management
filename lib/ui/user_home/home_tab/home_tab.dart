@@ -459,7 +459,7 @@ class _HomeTabState extends State<HomeTab>{
   Future<void> _fetchOutstandingDoctors() async {
     try {
       List<Map<String, dynamic>> fetchedDoctors =
-      await doctorRepository.getOutstandingDoctor(7); // Lấy 5 bác sĩ
+      await doctorRepository.getOutstandingDoctor(10); // Lấy tối đa 10 bác sĩ
       setState(() {
         doctors = fetchedDoctors;
       });
