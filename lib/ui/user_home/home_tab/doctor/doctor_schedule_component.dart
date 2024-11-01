@@ -6,8 +6,13 @@ import 'package:intl/intl.dart'; //để định dạng ngày
 
 class DoctorScheduleComponent extends StatefulWidget {
   final int doctorId;
+  final String? price;
 
-  const DoctorScheduleComponent({super.key, required this.doctorId});
+  const DoctorScheduleComponent({
+    super.key,
+    required this.doctorId,
+    required this.price
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -83,7 +88,12 @@ class _DoctorScheduleComponentState extends State<DoctorScheduleComponent> {
               child: TextButton(
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(
-                      builder: (context) => BookingModal(doctorId: widget.doctorId,)
+                      builder: (context) => BookingModal(
+                        doctorId: widget.doctorId,
+                        schedule: schedule['timeTypeData']['valueVi'],
+                        date: _selectedDate,
+                        price: widget.price!,
+                      )
                   ));
                 },
                 style: TextButton.styleFrom(

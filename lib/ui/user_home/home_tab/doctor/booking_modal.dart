@@ -1,11 +1,19 @@
-import 'dart:typed_data';
-
+import 'package:clinic_management/ui/user_home/home_tab/doctor/profile_doctor_component.dart';
 import 'package:flutter/material.dart';
 
 class BookingModal extends StatefulWidget {
   final int doctorId;
+  final String schedule;
+  final String? date;
+  final String? price;
 
-  const BookingModal({super.key, required this.doctorId});
+  const BookingModal({
+    super.key,
+    required this.doctorId,
+    required this.schedule,
+    required this.date,
+    required this.price
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -16,12 +24,6 @@ class BookingModal extends StatefulWidget {
 class _BookingModalState extends State<BookingModal> {
   late TextEditingController _nameController = TextEditingController();
 
-  Uint8List? _imageAvatar; // Dữ liệu ảnh dưới dạng byte
-  String? _nameDoctor;
-  String? _positionDoctor;
-  String? _descriptionBooking;
-  String? _price;
-  String? _schedule;
   bool isLoading = true; // Trạng thái loading
 
   @override
@@ -58,7 +60,13 @@ class _BookingModalState extends State<BookingModal> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _doctorInfor(),
+              ProfileDoctorComponent(
+                doctorId: widget.doctorId,
+                isShowDescriptionDoctor: false,
+                schedule: widget.schedule,
+                date: widget.date,
+              ),
+              const SizedBox(height: 5,),
               _buildPrice(),
               _bookingDetail(),
               _buildPayment(),
@@ -66,44 +74,6 @@ class _BookingModalState extends State<BookingModal> {
             ],
           ),
         ),
-      ],
-    );
-  }
-
-  Widget _doctorInfor(){
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start, // Căn đầu hàng
-      children: [
-        _imageAvatar != null
-            ? CircleAvatar(
-          radius: 34,
-          backgroundImage: MemoryImage(_imageAvatar!),
-        )
-            : const CircleAvatar(
-          radius: 34,
-          backgroundImage: AssetImage('assets/images/user_avata.png'),
-        ),
-        const SizedBox(width: 15,),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start, // Căn trái cho text
-            children: [
-              const Text('ĐẶT LỊCH KHÁM',
-                  style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.black54)),
-              Text('${_positionDoctor ?? 'Tiến sĩ'}, ${_nameDoctor ?? 'Dui'}',
-                style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-              ),
-              Text(_schedule ?? '15:00 - 15:30',
-                style: const TextStyle(fontSize: 14),),
-              Text(_descriptionBooking ?? 'Miễn phí đặt lịch',
-                style: const TextStyle(fontSize: 14),
-              ),
-              const SizedBox(height: 5,),
-            ],
-          ),
-        )
       ],
     );
   }
@@ -122,7 +92,7 @@ class _BookingModalState extends State<BookingModal> {
             children: [
               const Icon(Icons.check_circle_rounded, size: 16, color: Colors.blueAccent,),
               Text(
-                'Giá khám ${_price ?? '500.000'}đ',
+                'Giá khám ${widget.price ?? ''}đ',
                 style: const TextStyle(fontSize: 14),
               ),
             ],

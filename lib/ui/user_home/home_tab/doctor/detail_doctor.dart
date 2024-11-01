@@ -23,6 +23,8 @@ class _DetailDoctorState extends State<DetailDoctor> {
   String? _descriptionDoctor;
   String? _detailContentDoctor;
 
+  String? _price; // Biến để lưu giá từ callback của DoctorExtraInfoComponent
+
   @override
   void initState() {
     super.initState();
@@ -59,8 +61,15 @@ class _DetailDoctorState extends State<DetailDoctor> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _doctorDescription(),
-              DoctorScheduleComponent(doctorId: widget.doctorId),
-              DoctorExtraInfoComponent(doctorId: widget.doctorId),
+              DoctorScheduleComponent(doctorId: widget.doctorId, price: _price,),
+              DoctorExtraInfoComponent(
+                doctorId: widget.doctorId,
+                onPriceFetched: (price) {
+                  setState(() {
+                    _price = price;
+                  });
+                },
+              ),
               _doctorDetailContent()
             ],
           ),

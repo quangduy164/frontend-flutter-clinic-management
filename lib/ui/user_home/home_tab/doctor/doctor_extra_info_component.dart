@@ -3,8 +3,13 @@ import 'package:flutter/material.dart';
 
 class DoctorExtraInfoComponent extends StatefulWidget {
   final int doctorId;
+  final Function(String) onPriceFetched; // Thêm hàm callback
 
-  const DoctorExtraInfoComponent({super.key, required this.doctorId});
+  const DoctorExtraInfoComponent({
+    super.key,
+    required this.doctorId,
+    required this.onPriceFetched
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -205,6 +210,8 @@ class _DoctorExtraInfoComponentState extends State<DoctorExtraInfoComponent> {
         _price = fetchedExtraInfor['priceTypeData']['valueVi'] ?? '';
         _payment = fetchedExtraInfor['paymentTypeData']['valueVi'] ?? '';
         _note = fetchedExtraInfor['note'] ?? '';
+
+        widget.onPriceFetched(_price ?? ''); // Truyền giá trị giá vào callback
       });
     } catch (e) {
       // Xử lý lỗi nếu cần thiết
