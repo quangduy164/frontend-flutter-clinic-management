@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 class BookingModal extends StatefulWidget {
   final int doctorId;
+  final String doctorName;
   final String schedule;
   final String? date;
   final String? timeType;
@@ -12,6 +13,7 @@ class BookingModal extends StatefulWidget {
   const BookingModal({
     super.key,
     required this.doctorId,
+    required this.doctorName,
     required this.schedule,
     required this.date,
     required this.timeType,
@@ -265,8 +267,10 @@ class _BookingModalState extends State<BookingModal> {
       final result = await PatientRepository().patientBookAppointment(
         _emailController.text,
         widget.doctorId,
+        widget.doctorName,
         widget.date!,
         widget.timeType!,
+        widget.schedule,
         _nameController.text,
         _addressController.text,
         _selectedGender!,
@@ -275,7 +279,7 @@ class _BookingModalState extends State<BookingModal> {
 
       if (result['success']) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Lưu thông tin lịch khám thành công')),
+          const SnackBar(content: Text('Đặt lịch khám thành công')),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

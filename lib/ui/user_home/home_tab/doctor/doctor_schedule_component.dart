@@ -90,6 +90,7 @@ class _DoctorScheduleComponentState extends State<DoctorScheduleComponent> {
                   Navigator.push(context, MaterialPageRoute(
                       builder: (context) => BookingModal(
                         doctorId: widget.doctorId,
+                        doctorName: '${schedule['doctorData']['lastName']} ${schedule['doctorData']['firstName']}',
                         schedule: schedule['timeTypeData']['valueVi'],
                         date: _selectedDate,
                         timeType: schedule['timeType'],

@@ -7,7 +7,8 @@ class PatientRepository {
 
   // Lưu thông tin patient qua api
   Future<Map<String, dynamic>> patientBookAppointment(
-      String email, int doctorId, String date, String timeType,
+      String email, int doctorId, String doctorName, String date,
+      String timeType, String schedule,
       String name, String address, String gender, String phoneNumber
       ) async {
     final response = await http.post(
@@ -22,7 +23,9 @@ class PatientRepository {
         'gender': gender,
         'phoneNumber': phoneNumber,
         'doctorId': doctorId,
+        'doctorName': doctorName,
         'date': date.trim(),
+        'schedule': schedule.trim(),
         'timeType': timeType.trim(),
       }),
     );
