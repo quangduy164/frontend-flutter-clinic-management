@@ -92,6 +92,7 @@ class _DoctorScheduleComponentState extends State<DoctorScheduleComponent> {
                         doctorId: widget.doctorId,
                         schedule: schedule['timeTypeData']['valueVi'],
                         date: _selectedDate,
+                        timeType: schedule['timeType'],
                         price: widget.price!,
                       )
                   ));
