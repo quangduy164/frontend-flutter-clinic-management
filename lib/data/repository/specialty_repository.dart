@@ -1,32 +1,24 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 
-class PatientRepository {
+class SpecialtyRepository {
   final String apiUrl = 'http://192.168.1.23:8080/api'; //URL api
 
   // Lưu thông tin patient qua api
-  Future<Map<String, dynamic>> patientBookAppointment(
-      String email, int doctorId, String doctorName, String date,
-      String timeType, String schedule,
-      String name, String address, String gender, String phoneNumber
-      ) async {
+  Future<Map<String, dynamic>> createNewSpecialty(
+      String name, Uint8List imageBytes, String description) async {
+    String base64Image = base64Encode(imageBytes); // Mã hóa ảnh thành Base64
     final response = await http.post(
-      Uri.parse('$apiUrl/patient-book-appointment'),
+      Uri.parse('$apiUrl/create-new-specialty'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, dynamic>{
-        'email': email,
         'name': name,
-        'address': address,
-        'gender': gender,
-        'phoneNumber': phoneNumber,
-        'doctorId': doctorId,
-        'doctorName': doctorName,
-        'date': date.trim(),
-        'schedule': schedule.trim(),
-        'timeType': timeType.trim(),
+        'image': base64Image,
+        'description': description,
       }),
     );
 
@@ -41,7 +33,8 @@ class PatientRepository {
         return {'success': false, 'message': responseBody['errMessage']};
       }
     } else {
-      throw Exception('Failed to save information patient');
+      throw Exception('Failed to save information specialty');
     }
   }
+
 }

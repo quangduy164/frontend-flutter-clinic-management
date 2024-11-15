@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserRepository {
-  final String apiUrl = 'http://192.168.1.31:8080/api'; //URL api
+  final String apiUrl = 'http://192.168.1.23:8080/api'; //URL api
 
   // Đăng nhập với email và mật khẩu thông qua API Express
   Future<Map<String, dynamic>> signInWithEmailAndPassword(

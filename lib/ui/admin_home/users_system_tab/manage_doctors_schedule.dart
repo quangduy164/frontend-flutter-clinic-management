@@ -154,7 +154,7 @@ class _ManageDoctorsScheduleState extends State<ManageDoctorsSchedule> {
               ),
             ),
             child: Text(
-              schedule['valueEN'],
+              schedule['valueVI'],
               style: TextStyle(
                   fontSize: 12, fontWeight: FontWeight.w500,
                   color: isSelected ? Colors.white : Colors.black
