@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:clinic_management/data/repository/doctor_repository.dart';
+import 'package:clinic_management/data/repository/specialty_repository.dart';
 import 'package:clinic_management/ui/user_home/home_tab/doctor/detail_doctor.dart';
 import 'package:flutter/material.dart';
 
@@ -24,12 +25,14 @@ class _HomeTabState extends State<HomeTab>{
 
   final DoctorRepository doctorRepository = DoctorRepository();
   List<Map<String, dynamic>> doctors = [];//bác sĩ nổi bật
+  List<Map<String, dynamic>> specialties = [];//chuyên khoa
   bool isLoading = true; // Trạng thái loading
 
   @override
   void initState() {
     super.initState();
     _fetchOutstandingDoctors(); //Gọi API khi widget được tạo
+    _fetchSpecialties();
   }
 
   @override
@@ -48,7 +51,7 @@ class _HomeTabState extends State<HomeTab>{
       children: [
         _headerSection(),
         _getService(),
-        _getSpecialty(),
+        _getSpecialties(),
         _getMedicalFacility(),
         _getOutstandingDoctor(),
         _getHandBook()
@@ -264,7 +267,13 @@ class _HomeTabState extends State<HomeTab>{
     );
   }
 
-  Widget _getSpecialty(){
+  Widget _getSpecialties(){
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (doctors.isEmpty) {
+      return const Center(child: Text('Không có chuyên khoa.'));
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -281,49 +290,29 @@ class _HomeTabState extends State<HomeTab>{
           child: Padding(
             padding: const EdgeInsets.all(15.0),
             child: Row(
-              children: [
-                ItemSpecialtySection(
-                    function: (){},
-                    image: 'assets/images/specialty/co-xuong-khop.png',
-                    text: 'Cơ xương khớp'
-                ),
-                const SizedBox(width: 15,),
-                ItemSpecialtySection(
-                    function: (){},
-                    image: 'assets/images/specialty/than-kinh.png',
-                    text: 'Thần kinh'
-                ),
-                const SizedBox(width: 15,),
-                ItemSpecialtySection(
-                    function: (){},
-                    image: 'assets/images/specialty/tieu-hoa.png',
-                    text: 'Tiêu hóa'
-                ),
-                const SizedBox(width: 15,),
-                ItemSpecialtySection(
-                    function: (){},
-                    image: 'assets/images/specialty/tim-mach.png',
-                    text: 'Tim mạch'
-                ),
-                const SizedBox(width: 15,),
-                ItemSpecialtySection(
-                    function: (){},
-                    image: 'assets/images/specialty/tai-mui-hong.png',
-                    text: 'Tai mũi họng'
-                ),
-                const SizedBox(width: 15,),
-                ItemSpecialtySection(
-                    function: (){},
-                    image: 'assets/images/specialty/cot-song.png',
-                    text: 'Cột sống'
-                ),
-                const SizedBox(width: 15,),
-                ItemSpecialtySection(
-                    function: (){},
-                    image: 'assets/images/specialty/y-hoc-co-truyen.png',
-                    text: 'Y học cổ truyền'
-                )
-              ],
+              children: specialties.map((specialty) {
+                final name = specialty['name'] ?? '';
+                // Lấy ảnh từ API và kiểm tra tính hợp lệ
+                Uint8List? image;
+                if (specialty.containsKey('image') && specialty['image'] != null) {
+                  final List<int> imageData = List<int>.from(specialty['image']['data']);
+                  if (imageData.isNotEmpty) {
+                    setState(() {
+                      image = Uint8List.fromList(imageData);
+                    });
+                  } else {
+                    debugPrint('Dữ liệu hình ảnh rỗng.');
+                  }
+                }
+                return Padding(
+                  padding: const EdgeInsets.only(right: 15.0),
+                  child: ItemSpecialtySection(
+                    function: () {},
+                    image: image, // Có thể là null nếu k có dữ liệu
+                    text: '$name',
+                  ),
+                );
+              }).toList(),
             ),
           ),
         )
@@ -466,6 +455,23 @@ class _HomeTabState extends State<HomeTab>{
     } catch (e) {
       // Xử lý lỗi nếu cần thiết
       debugPrint('Lỗi khi lấy danh sách bác sĩ: $e');
+    } finally {
+      setState(() {
+        isLoading = false; // Hoàn tất việc load dữ liệu
+      });
+    }
+  }
+
+  Future<void> _fetchSpecialties() async {
+    try {
+      List<Map<String, dynamic>> fetchedSpecialties =
+      await SpecialtyRepository().getAllSpecialties(); // Lấy thông tin chuyên khoa
+      setState(() {
+        specialties = fetchedSpecialties;
+      });
+    } catch (e) {
+      // Xử lý lỗi nếu cần thiết
+      debugPrint('Lỗi khi lấy danh sách chuyên khoa: $e');
     } finally {
       setState(() {
         isLoading = false; // Hoàn tất việc load dữ liệu

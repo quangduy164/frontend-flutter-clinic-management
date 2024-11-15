@@ -1,8 +1,10 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 
 class ItemSpecialtySection extends StatefulWidget {
   final Function? function;
-  final String image;
+  final Uint8List? image;
   final String text;
 
   const ItemSpecialtySection(
@@ -44,9 +46,15 @@ class _ItemSpecialtySectionState extends State<ItemSpecialtySection> {
               padding: const EdgeInsets.all(5.0),
               child: Column(
                 children: [
-                  Image.asset(
-                    '${widget.image}',
+                  widget.image != null && widget.image!.isNotEmpty
+                      ? Image.memory(
+                    widget.image!,
                     height: 75,
+                    fit: BoxFit.contain,
+                  )
+                      : Image.asset(
+                    'assets/images/user_avata.png',
+                    height: 114,
                     fit: BoxFit.contain,
                   ),
                   const SizedBox(height: 3),
