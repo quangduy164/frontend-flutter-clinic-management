@@ -35,7 +35,7 @@ class _DoctorComponentState extends State<DoctorComponent> {
         color: Colors.white,
         border: Border.all(
           color: Colors.grey, // Màu viền
-          width: 0.2, // Độ dày viền
+          width: 0.1, // Độ dày viền
         ),
         boxShadow: [
           BoxShadow(
@@ -54,6 +54,7 @@ class _DoctorComponentState extends State<DoctorComponent> {
               ProfileDoctorComponent(
                   doctorId: widget.doctorId,
                   isShowDescriptionDoctor: true,
+                  isShowSeeMore: true,
                   schedule: null,
                   date: null),
               DoctorScheduleComponent(

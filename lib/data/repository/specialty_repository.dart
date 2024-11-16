@@ -85,4 +85,26 @@ class SpecialtyRepository {
     }
   }
 
+  //lấy thông tin chi tiết specialty theo id từ API
+  Future<Map<String, dynamic>> getDetailSpecialtyById(int doctorId, String location) async {
+    final response = await http.get(
+      Uri.parse('$apiUrl/get-detail-specialty-by-id?id=$doctorId&location=$location'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseBody = jsonDecode(response.body);
+      if (responseBody['errCode'] == 0) {
+        return responseBody['data']; // Trả về object data
+      } else {
+        throw Exception(
+            'Failed to fetch detail specialty: ${responseBody['message']}');
+      }
+    } else {
+      throw Exception('Failed to fetch detail specialty');
+    }
+  }
+
 }

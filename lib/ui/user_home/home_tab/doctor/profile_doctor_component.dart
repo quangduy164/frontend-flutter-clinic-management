@@ -3,15 +3,19 @@ import 'dart:typed_data';
 import 'package:clinic_management/data/repository/doctor_repository.dart';
 import 'package:flutter/material.dart';
 
+import 'detail_doctor.dart';
+
 class ProfileDoctorComponent extends StatefulWidget {
   final int doctorId;
   final bool isShowDescriptionDoctor;
+  final bool isShowSeeMore;
   final String? schedule;
   final String? date;
   const ProfileDoctorComponent({
     super.key,
     required this.doctorId,
     required this.isShowDescriptionDoctor,
+    required this.isShowSeeMore,
     required this.schedule,
     required this.date
   });
@@ -83,14 +87,30 @@ class _ProfileDoctorComponentState extends State<ProfileDoctorComponent> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start, // Căn đầu hàng
       children: [
-        _imageAvatar != null
-            ? CircleAvatar(
-          radius: 34,
-          backgroundImage: MemoryImage(_imageAvatar!),
-        )
-            : const CircleAvatar(
-          radius: 34,
-          backgroundImage: AssetImage('assets/images/user_avata.png'),
+        Column(
+          children: [
+            _imageAvatar != null
+                ? CircleAvatar(
+              radius: 34,
+              backgroundImage: MemoryImage(_imageAvatar!),
+            )
+                : const CircleAvatar(
+              radius: 34,
+              backgroundImage: AssetImage('assets/images/user_avata.png'),
+            ),
+            const SizedBox(height: 15,),
+            widget.isShowSeeMore ?
+            TextButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => DetailDoctor(doctorId: widget.doctorId,)
+                ));
+              },
+              child: const Text('Xem thêm',
+                  style: TextStyle(fontSize: 14, color: Colors.cyan))
+            )
+                : const Text('')
+          ],
         ),
         const SizedBox(width: 15,),
         Expanded(

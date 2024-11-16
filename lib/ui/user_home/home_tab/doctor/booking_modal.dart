@@ -73,6 +73,7 @@ class _BookingModalState extends State<BookingModal> {
               ProfileDoctorComponent(
                 doctorId: widget.doctorId,
                 isShowDescriptionDoctor: false,
+                isShowSeeMore: false,
                 schedule: widget.schedule,
                 date: widget.date,
               ),
