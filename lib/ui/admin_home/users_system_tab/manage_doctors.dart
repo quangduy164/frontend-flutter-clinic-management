@@ -1,4 +1,5 @@
 import 'package:clinic_management/data/repository/doctor_repository.dart';
+import 'package:clinic_management/data/repository/specialty_repository.dart';
 import 'package:clinic_management/data/repository/user_repository.dart';
 import 'package:flutter/material.dart';
 
@@ -21,10 +22,15 @@ class _ManageDoctorsState extends State<ManageDoctors> {
   late Future<List<Map<String, dynamic>>> futureGetAllPayments;
   late Future<List<Map<String, dynamic>>> futureGetAllProvinces;
 
+  late Future<List<Map<String, dynamic>>> futureGetAllSpecialties;
+
   String? _selectedDoctorId; // Biến chọn doctorId
   String? _selectedPrice;//Biến chọn giá khám
   String? _selectedPayment;//Biến chọn phương thức thanh toán
   String? _selectedProvince;//Biến chọn tỉnh
+
+  String? _selectedSpecialty;//Biến chọn chuyên khoa
+  //String? _selectedClinic;//Biến chọn phòng khám
 
   late String _action;//Biến chọn create/update data
 
@@ -34,6 +40,8 @@ class _ManageDoctorsState extends State<ManageDoctors> {
     futureGetAllPrices = UserRepository().getAllCode('PRICE'); // Lấy tất cả giá khám
     futureGetAllPayments = UserRepository().getAllCode('PAYMENT');
     futureGetAllProvinces = UserRepository().getAllCode('PROVINCE');
+
+    futureGetAllSpecialties = SpecialtyRepository().getAllSpecialties();
 
     _action = 'CREATE';
     super.initState();
@@ -124,6 +132,8 @@ class _ManageDoctorsState extends State<ManageDoctors> {
           _buildSelectedDoctorInfor(futureGetAllPayments, 'Chọn phương thức thanh toán:', 'selectedPayment'),
           const SizedBox(height: 5,),
           _buildSelectedDoctorInfor(futureGetAllProvinces, 'Chọn tỉnh thành:', 'selectedProvince'),
+          const SizedBox(height: 5,),
+          _buildSelectedSpecialty(futureGetAllSpecialties, 'Chọn chuyên khoa:', 'selectedSpecialty'),
           const SizedBox(height: 5),
           _doctorDetailContent('Tên phòng khám', _nameClinicController, 50),
           _doctorDetailContent('Địa chỉ phòng khám', _addressClinicController, 50),
@@ -208,6 +218,75 @@ class _ManageDoctorsState extends State<ManageDoctors> {
             } else if(selectedInfor == 'selectedProvince'){
               _selectedProvince = value;
             }
+          });
+        },
+        validator: (value) => value == null ? 'Vui lòng chọn' : null, // Kiểm tra nếu chưa chọn
+        alignment: Alignment.center, // Căn giữa toàn bộ dropdown
+        isExpanded: true, // Giúp dropdown chiếm toàn bộ chiều rộng
+      ),
+    );
+  }
+
+  Widget _buildSelectedSpecialty(
+      Future<List<Map<String, dynamic>>> futureGetAllInfors,
+      String title, String selectedInfor){
+    return Row(
+      children: [
+        Text(title,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        ),
+        const SizedBox(width: 10),
+        FutureBuilder<List<Map<String, dynamic>>>(
+          future: futureGetAllInfors,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Text('Lỗi: ${snapshot.error}');
+            } else {
+              final infors = snapshot.data!;
+              return _buildDropdownButtonSpecialty(infors, selectedInfor);
+            }
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDropdownButtonSpecialty(List<Map<String, dynamic>> infors, String? selectedInfor) {
+    return Expanded(
+      child: DropdownButtonFormField<String>(
+        decoration: const InputDecoration(
+          isDense: true,
+          contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.black,
+              width: 0.5,
+            ),
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.black,
+              width: 0.5,
+            ),
+          ),
+        ),
+        //Kiểm tra và khởi tạo giá trị hợp lệ hoặc null cho selectedInfor tránh lỗi dropdown ở trạng thái chưa chọn
+        value: infors.any((infor) => infor['id'].toString() == _selectedSpecialty)
+            ? _selectedSpecialty
+            : null, // Gán đúng giá trị
+        items: infors.map((infor) {
+          return DropdownMenuItem<String>(
+            value: infor['id'].toString(),
+            child: Center(
+                child: Text('${infor['name']}', textAlign: TextAlign.center,)
+            ), // Hiển thị infor api
+          );
+        }).toList(),
+        onChanged: (value) {
+          setState(() {
+            _selectedSpecialty = value;
           });
         },
         validator: (value) => value == null ? 'Vui lòng chọn' : null, // Kiểm tra nếu chưa chọn
@@ -322,6 +401,7 @@ class _ManageDoctorsState extends State<ManageDoctors> {
         _selectedPrice!,
         _selectedPayment!,
         _selectedProvince!,
+          int.parse(_selectedSpecialty!),
         _nameClinicController.text,
         _addressClinicController.text,
         _noteController.text
@@ -353,6 +433,7 @@ class _ManageDoctorsState extends State<ManageDoctors> {
         _selectedPrice = doctor['Doctor_Infor']['priceId'];
         _selectedPayment = doctor['Doctor_Infor']['paymentId'];
         _selectedProvince = doctor['Doctor_Infor']['provinceId'];
+        _selectedSpecialty = doctor['Doctor_Infor']['specialtyId'].toString();
 
         // Gán trực tiếp vào controller
         _nameClinicController.text = doctor['Doctor_Infor']['nameClinic'] ?? '';
@@ -374,6 +455,7 @@ class _ManageDoctorsState extends State<ManageDoctors> {
       futureGetAllDoctors = DoctorRepository().getAllDoctors(); // Cập nhật lại future
       futureGetAllPrices = UserRepository().getAllCode('PRICE');
       futureGetAllPayments = UserRepository().getAllCode('PAYMENT');
+      futureGetAllSpecialties = SpecialtyRepository().getAllSpecialties();
     });
   }
 }

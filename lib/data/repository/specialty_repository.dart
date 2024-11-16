@@ -61,4 +61,28 @@ class SpecialtyRepository {
     }
   }
 
+  //lấy tất cả thông tin specialty từ API
+  Future<List<Map<String, dynamic>>> getAllDetailSpecialties() async {
+    final response = await http.get(
+      Uri.parse('$apiUrl/get-all-detail-specialties'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseBody =
+      jsonDecode(response.body); //chuyển phản hồi JSON thành Map
+      if (responseBody['errCode'] == 0) {
+        List<dynamic> doctors = responseBody['data']; //lấy danh sách doctor
+        return List<Map<String, dynamic>>.from(
+            doctors); //chuyển danh sách doctor thành list các object
+      } else {
+        throw Exception('Failed to fetch specialties: ${responseBody['message']}');
+      }
+    } else {
+      throw Exception('Failed to fetch specialties');
+    }
+  }
+
 }

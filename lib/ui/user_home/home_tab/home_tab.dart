@@ -465,7 +465,7 @@ class _HomeTabState extends State<HomeTab>{
   Future<void> _fetchSpecialties() async {
     try {
       List<Map<String, dynamic>> fetchedSpecialties =
-      await SpecialtyRepository().getAllSpecialties(); // Lấy thông tin chuyên khoa
+      await SpecialtyRepository().getAllDetailSpecialties(); // Lấy thông tin chuyên khoa
       setState(() {
         specialties = fetchedSpecialties;
       });

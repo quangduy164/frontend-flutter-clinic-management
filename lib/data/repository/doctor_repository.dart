@@ -57,6 +57,7 @@ class DoctorRepository {
   Future<Map<String, dynamic>> saveInforDoctor(
       int doctorId, String content, String? description, String action,
       String selectedPrice, String selectedPayment, String selectedProvince,
+      int selectedSpecialty,
       String nameClinic, String addressClinic, String? note) async {
     final response = await http.post(
       Uri.parse('$apiUrl/save-infor-doctor'),
@@ -71,6 +72,7 @@ class DoctorRepository {
         'selectedPrice': selectedPrice.trim(),
         'selectedPayment': selectedPayment.trim(),
         'selectedProvince': selectedProvince.trim(),
+        'selectedSpecialty': selectedSpecialty,
         'nameClinic': nameClinic.trim(),
         'addressClinic': addressClinic.trim(),
         'note': note
