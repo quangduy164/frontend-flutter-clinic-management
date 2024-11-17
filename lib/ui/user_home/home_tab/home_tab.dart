@@ -6,9 +6,10 @@ import 'package:clinic_management/ui/user_home/home_tab/doctor/detail_doctor.dar
 import 'package:clinic_management/ui/user_home/home_tab/specialty/detail_specialty.dart';
 import 'package:flutter/material.dart';
 
+import '../../../data/repository/clinic_repository.dart';
 import 'doctor/item_outstanding_doctor_section.dart';
 import 'item_handbook_section.dart';
-import 'item_medical_facility_section.dart';
+import 'medical_facility/item_medical_facility_section.dart';
 import 'item_service_section.dart';
 import 'specialty/item_specialty_section.dart';
 
@@ -27,6 +28,7 @@ class _HomeTabState extends State<HomeTab>{
   final DoctorRepository doctorRepository = DoctorRepository();
   List<Map<String, dynamic>> doctors = [];//bác sĩ nổi bật
   List<Map<String, dynamic>> specialties = [];//chuyên khoa
+  List<Map<String, dynamic>> clinics = [];//cơ sở y tế
   bool isLoading = true; // Trạng thái loading
 
   @override
@@ -34,6 +36,7 @@ class _HomeTabState extends State<HomeTab>{
     super.initState();
     _fetchOutstandingDoctors(); //Gọi API khi widget được tạo
     _fetchSpecialties();
+    _fetchClinics();
   }
 
   @override
@@ -202,6 +205,12 @@ class _HomeTabState extends State<HomeTab>{
   }
 
   Widget _getMedicalFacility(){
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (doctors.isEmpty) {
+      return const Center(child: Text('Không có cơ sở y tế.'));
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -218,49 +227,30 @@ class _HomeTabState extends State<HomeTab>{
           child: Padding(
             padding: const EdgeInsets.all(15.0),
             child: Row(
-              children: [
-                ItemMedicalFacilitySection(
-                    function: (){},
-                    image: 'assets/images/medical_facility/logo-viet-duc.jpg',
-                    text: 'Bệnh viện Hữu nghị Việt Đức'
-                ),
-                const SizedBox(width: 15,),
-                ItemMedicalFacilitySection(
-                    function: (){},
-                    image: 'assets/images/medical_facility/logo-bvcr.jpg',
-                    text: 'Bệnh viện Chợ Rẫy'
-                ),
-                const SizedBox(width: 15,),
-                ItemMedicalFacilitySection(
-                    function: (){},
-                    image: 'assets/images/medical_facility/logo-doctor-check.jpg',
-                    text: 'Doctor Check - Tầm Soát Bệnh Để Sống Thọ Hơn'
-                ),
-                const SizedBox(width: 15,),
-                ItemMedicalFacilitySection(
-                    function: (){},
-                    image: 'assets/images/medical_facility/logo-y-duoc-1.jpg',
-                    text: 'Phòng khám Bệnh viện Đại học Y Dược 1'
-                ),
-                const SizedBox(width: 15,),
-                ItemMedicalFacilitySection(
-                    function: (){},
-                    image: 'assets/images/medical_facility/logo-benhvien108.jpg',
-                    text: 'Bệnh viện Trung ương Quân đội 108'
-                ),
-                const SizedBox(width: 15,),
-                ItemMedicalFacilitySection(
-                    function: (){},
-                    image: 'assets/images/medical_facility/logo-hung-viet.jpg',
-                    text: 'Bệnh viện Ung bướu Hưng Việt'
-                ),
-                const SizedBox(width: 15,),
-                ItemMedicalFacilitySection(
-                    function: (){},
-                    image: 'assets/images/medical_facility/logo-medlatec.png',
-                    text: 'Hệ thống y tế MEDLATEC'
-                ),
-              ],
+              children: clinics.map((clinic) {
+                final name = clinic['name'] ?? '';
+                // Lấy ảnh từ API và kiểm tra tính hợp lệ
+                Uint8List? image;
+                if (clinic.containsKey('image') && clinic['image'] != null) {
+                  final List<int> imageData = List<int>.from(clinic['image']['data']);
+                  if (imageData.isNotEmpty) {
+                    setState(() {
+                      image = Uint8List.fromList(imageData);
+                    });
+                  } else {
+                    debugPrint('Dữ liệu hình ảnh rỗng.');
+                  }
+                }
+                return Padding(
+                  padding: const EdgeInsets.only(right: 15.0),
+                  child: ItemMedicalFacilitySection(
+                    function: () {
+                    },
+                    image: image, // Có thể là null nếu k có dữ liệu
+                    text: '$name',
+                  ),
+                );
+              }).toList(),
             ),
           ),
         )
@@ -477,6 +467,23 @@ class _HomeTabState extends State<HomeTab>{
     } catch (e) {
       // Xử lý lỗi nếu cần thiết
       debugPrint('Lỗi khi lấy danh sách chuyên khoa: $e');
+    } finally {
+      setState(() {
+        isLoading = false; // Hoàn tất việc load dữ liệu
+      });
+    }
+  }
+
+  Future<void> _fetchClinics() async {
+    try {
+      List<Map<String, dynamic>> fetchedClinics =
+      await ClinicRepository().getAllDetailClinics(); // Lấy thông tin chuyên khoa
+      setState(() {
+        clinics = fetchedClinics;
+      });
+    } catch (e) {
+      // Xử lý lỗi nếu cần thiết
+      debugPrint('Lỗi khi lấy danh sách cơ sở y tế: $e');
     } finally {
       setState(() {
         isLoading = false; // Hoàn tất việc load dữ liệu

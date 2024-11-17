@@ -1,8 +1,10 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 
 class ItemMedicalFacilitySection extends StatefulWidget {
   final Function? function;
-  final String image;
+  final Uint8List? image;
   final String text;
 
   const ItemMedicalFacilitySection(
@@ -45,8 +47,14 @@ class _ItemMedicalFacilitySectionState extends State<ItemMedicalFacilitySection>
               child: Column(
                 children: [
                   const SizedBox(height: 5),
-                  Image.asset(
-                    '${widget.image}',
+                  widget.image != null && widget.image!.isNotEmpty
+                      ? Image.memory(
+                    widget.image!,
+                    height: 65,
+                    fit: BoxFit.contain,
+                  )
+                      : Image.asset(
+                    'assets/images/user_avata.png',
                     height: 65,
                     fit: BoxFit.contain,
                   ),

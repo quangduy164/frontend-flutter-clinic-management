@@ -54,7 +54,7 @@ class _ItemSpecialtySectionState extends State<ItemSpecialtySection> {
                   )
                       : Image.asset(
                     'assets/images/user_avata.png',
-                    height: 114,
+                    height: 75,
                     fit: BoxFit.contain,
                   ),
                   const SizedBox(height: 3),
