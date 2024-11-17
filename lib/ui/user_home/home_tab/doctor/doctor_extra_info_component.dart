@@ -20,7 +20,6 @@ class DoctorExtraInfoComponent extends StatefulWidget {
 class _DoctorExtraInfoComponentState extends State<DoctorExtraInfoComponent> {
   String? _nameClinc; //tên phòng khám
   String? _addressClinic;
-  String? _province;
   String? _price;
   String? _payment;
   String? _note;
@@ -67,7 +66,7 @@ class _DoctorExtraInfoComponentState extends State<DoctorExtraInfoComponent> {
       children: [
         Text(_nameClinc ?? '',
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-        Text( '${_addressClinic ?? ''}, ${_province ?? ''}',
+        Text( '$_addressClinic',
             style: const TextStyle(fontSize: 14)),
       ],
     );
@@ -206,7 +205,6 @@ class _DoctorExtraInfoComponentState extends State<DoctorExtraInfoComponent> {
       setState(() {
         _nameClinc = fetchedExtraInfor['nameClinic'] ?? '';
         _addressClinic = fetchedExtraInfor['addressClinic'] ?? '';
-        _province = fetchedExtraInfor['provinceTypeData']['valueVi'] ?? '';
         _price = fetchedExtraInfor['priceTypeData']['valueVi'] ?? '';
         _payment = fetchedExtraInfor['paymentTypeData']['valueVi'] ?? '';
         _note = fetchedExtraInfor['note'] ?? '';

@@ -72,7 +72,7 @@ class _DetailSpecialtyState extends State<DetailSpecialty> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.lightBlueAccent.withOpacity(0.3),
         border: Border.all(
           color: Colors.grey, // Màu viền
           width: 0.1, // Độ dày viền

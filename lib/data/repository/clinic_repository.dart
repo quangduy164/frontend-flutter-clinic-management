@@ -88,4 +88,26 @@ class ClinicRepository {
     }
   }
 
+  //lấy thông tin chi tiết clinic theo id từ API
+  Future<Map<String, dynamic>> getDetailClinicById(int clinicId) async {
+    final response = await http.get(
+      Uri.parse('$apiUrl/get-detail-clinic-by-id?id=$clinicId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseBody = jsonDecode(response.body);
+      if (responseBody['errCode'] == 0) {
+        return responseBody['data']; // Trả về object data
+      } else {
+        throw Exception(
+            'Failed to fetch detail clinic: ${responseBody['message']}');
+      }
+    } else {
+      throw Exception('Failed to fetch detail clinic');
+    }
+  }
+
 }

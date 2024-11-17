@@ -3,14 +3,15 @@ import 'dart:typed_data';
 import 'package:clinic_management/data/repository/doctor_repository.dart';
 import 'package:clinic_management/data/repository/specialty_repository.dart';
 import 'package:clinic_management/ui/user_home/home_tab/doctor/detail_doctor.dart';
+import 'package:clinic_management/ui/user_home/home_tab/medical_facility/detail_clinic.dart';
 import 'package:clinic_management/ui/user_home/home_tab/specialty/detail_specialty.dart';
 import 'package:flutter/material.dart';
 
 import '../../../data/repository/clinic_repository.dart';
 import 'doctor/item_outstanding_doctor_section.dart';
 import 'item_handbook_section.dart';
-import 'medical_facility/item_medical_facility_section.dart';
 import 'item_service_section.dart';
+import 'medical_facility/item_medical_facility_section.dart';
 import 'specialty/item_specialty_section.dart';
 
 class HomeTab extends StatefulWidget{
@@ -245,6 +246,9 @@ class _HomeTabState extends State<HomeTab>{
                   padding: const EdgeInsets.only(right: 15.0),
                   child: ItemMedicalFacilitySection(
                     function: () {
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => DetailClinic(clinicId: clinic['id'],)
+                      ));
                     },
                     image: image, // Có thể là null nếu k có dữ liệu
                     text: '$name',
