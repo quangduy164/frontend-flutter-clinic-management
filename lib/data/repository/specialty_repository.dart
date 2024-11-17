@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 class SpecialtyRepository {
   final String apiUrl = 'http://192.168.1.23:8080/api'; //URL api
 
-  // Lưu thông tin patient qua api
+  // Lưu thông tin specialty qua api
   Future<Map<String, dynamic>> createNewSpecialty(
       String name, Uint8List imageBytes, String description) async {
     String base64Image = base64Encode(imageBytes); // Mã hóa ảnh thành Base64
