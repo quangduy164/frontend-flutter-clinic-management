@@ -40,4 +40,28 @@ class ClinicRepository {
     }
   }
 
+  //lấy tất cả name, address clinic từ API
+  Future<List<Map<String, dynamic>>> getAllClinics() async {
+    final response = await http.get(
+      Uri.parse('$apiUrl/get-all-clinics'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseBody =
+      jsonDecode(response.body); //chuyển phản hồi JSON thành Map
+      if (responseBody['errCode'] == 0) {
+        List<dynamic> clinics = responseBody['data']; //lấy danh sách clinic
+        return List<Map<String, dynamic>>.from(
+            clinics); //chuyển danh sách clinic thành list các object
+      } else {
+        throw Exception('Failed to fetch clinics: ${responseBody['message']}');
+      }
+    } else {
+      throw Exception('Failed to fetch clinics');
+    }
+  }
+
 }

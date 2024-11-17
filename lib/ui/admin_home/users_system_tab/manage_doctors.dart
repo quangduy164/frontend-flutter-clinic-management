@@ -3,6 +3,8 @@ import 'package:clinic_management/data/repository/specialty_repository.dart';
 import 'package:clinic_management/data/repository/user_repository.dart';
 import 'package:flutter/material.dart';
 
+import '../../../data/repository/clinic_repository.dart';
+
 class ManageDoctors extends StatefulWidget {
   const ManageDoctors({super.key});
 
@@ -23,6 +25,7 @@ class _ManageDoctorsState extends State<ManageDoctors> {
   late Future<List<Map<String, dynamic>>> futureGetAllProvinces;
 
   late Future<List<Map<String, dynamic>>> futureGetAllSpecialties;
+  late Future<List<Map<String, dynamic>>> futureGetAllClinics;
 
   String? _selectedDoctorId; // Biến chọn doctorId
   String? _selectedPrice;//Biến chọn giá khám
@@ -30,7 +33,7 @@ class _ManageDoctorsState extends State<ManageDoctors> {
   String? _selectedProvince;//Biến chọn tỉnh
 
   String? _selectedSpecialty;//Biến chọn chuyên khoa
-  //String? _selectedClinic;//Biến chọn phòng khám
+  String? _selectedClinic;//Biến chọn phòng khám
 
   late String _action;//Biến chọn create/update data
 
@@ -42,6 +45,7 @@ class _ManageDoctorsState extends State<ManageDoctors> {
     futureGetAllProvinces = UserRepository().getAllCode('PROVINCE');
 
     futureGetAllSpecialties = SpecialtyRepository().getAllSpecialties();
+    futureGetAllClinics = ClinicRepository().getAllClinics();
 
     _action = 'CREATE';
     super.initState();
@@ -134,6 +138,8 @@ class _ManageDoctorsState extends State<ManageDoctors> {
           _buildSelectedDoctorInfor(futureGetAllProvinces, 'Chọn tỉnh thành:', 'selectedProvince'),
           const SizedBox(height: 5,),
           _buildSelectedSpecialty(futureGetAllSpecialties, 'Chọn chuyên khoa:', 'selectedSpecialty'),
+          const SizedBox(height: 5,),
+          _buildSelectedClinic(futureGetAllClinics, 'Chọn phòng khám:', 'selectedClinic'),
           const SizedBox(height: 5),
           _doctorDetailContent('Tên phòng khám', _nameClinicController, 50),
           _doctorDetailContent('Địa chỉ phòng khám', _addressClinicController, 50),
@@ -296,6 +302,83 @@ class _ManageDoctorsState extends State<ManageDoctors> {
     );
   }
 
+  Widget _buildSelectedClinic(
+      Future<List<Map<String, dynamic>>> futureGetAllInfors,
+      String title, String selectedInfor){
+    return Row(
+      children: [
+        Text(title,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        ),
+        const SizedBox(width: 10),
+        FutureBuilder<List<Map<String, dynamic>>>(
+          future: futureGetAllInfors,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Text('Lỗi: ${snapshot.error}');
+            } else {
+              final infors = snapshot.data!;
+              return _buildDropdownButtonClinic(infors, selectedInfor);
+            }
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDropdownButtonClinic(List<Map<String, dynamic>> infors, String? selectedInfor) {
+    return Expanded(
+      child: DropdownButtonFormField<String>(
+        decoration: const InputDecoration(
+          isDense: true,
+          contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.black,
+              width: 0.5,
+            ),
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.black,
+              width: 0.5,
+            ),
+          ),
+        ),
+        //Kiểm tra và khởi tạo giá trị hợp lệ hoặc null cho selectedInfor tránh lỗi dropdown ở trạng thái chưa chọn
+        value: infors.any((infor) => infor['id'].toString() == _selectedClinic)
+            ? _selectedClinic
+            : null, // Gán đúng giá trị
+        items: infors.map((infor) {
+          return DropdownMenuItem<String>(
+            value: infor['id'].toString(),
+            child: Center(
+                child: Text('${infor['name']}', textAlign: TextAlign.center,)
+            ), // Hiển thị infor api
+          );
+        }).toList(),
+        onChanged: (value) {
+          setState(() {
+            _selectedClinic = value;
+            // Cập nhật `nameClinic` và `addressClinic` dựa trên lựa chọn
+            final selectedClinic = infors.firstWhere(
+                  (infor) => infor['id'].toString() == value,
+              orElse: () => {},
+            );
+            // Cập nhật controller
+            _nameClinicController.text = selectedClinic['name'] ?? '';
+            _addressClinicController.text = selectedClinic['address'] ?? '';
+          });
+        },
+        validator: (value) => value == null ? 'Vui lòng chọn' : null, // Kiểm tra nếu chưa chọn
+        alignment: Alignment.center, // Căn giữa toàn bộ dropdown
+        isExpanded: true, // Giúp dropdown chiếm toàn bộ chiều rộng
+      ),
+    );
+  }
+
   Widget _buildDropdownButton(List<Map<String, dynamic>> doctors){
     return DropdownButtonFormField<String>(
       decoration: const InputDecoration(
@@ -402,6 +485,7 @@ class _ManageDoctorsState extends State<ManageDoctors> {
         _selectedPayment!,
         _selectedProvince!,
           int.parse(_selectedSpecialty!),
+          int.parse(_selectedClinic!),
         _nameClinicController.text,
         _addressClinicController.text,
         _noteController.text
@@ -434,6 +518,7 @@ class _ManageDoctorsState extends State<ManageDoctors> {
         _selectedPayment = doctor['Doctor_Infor']['paymentId'];
         _selectedProvince = doctor['Doctor_Infor']['provinceId'];
         _selectedSpecialty = doctor['Doctor_Infor']['specialtyId'].toString();
+        _selectedClinic = doctor['Doctor_Infor']['clinicId'].toString();
 
         // Gán trực tiếp vào controller
         _nameClinicController.text = doctor['Doctor_Infor']['nameClinic'] ?? '';
@@ -456,6 +541,7 @@ class _ManageDoctorsState extends State<ManageDoctors> {
       futureGetAllPrices = UserRepository().getAllCode('PRICE');
       futureGetAllPayments = UserRepository().getAllCode('PAYMENT');
       futureGetAllSpecialties = SpecialtyRepository().getAllSpecialties();
+      futureGetAllSpecialties = ClinicRepository().getAllClinics();
     });
   }
 }

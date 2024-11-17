@@ -50,9 +50,9 @@ class SpecialtyRepository {
       final Map<String, dynamic> responseBody =
       jsonDecode(response.body); //chuyển phản hồi JSON thành Map
       if (responseBody['errCode'] == 0) {
-        List<dynamic> doctors = responseBody['data']; //lấy danh sách doctor
+        List<dynamic> specialties = responseBody['data']; //lấy danh sách specialty
         return List<Map<String, dynamic>>.from(
-            doctors); //chuyển danh sách doctor thành list các object
+            specialties); //chuyển danh sách specialty thành list các object
       } else {
         throw Exception('Failed to fetch specialties: ${responseBody['message']}');
       }
@@ -74,9 +74,9 @@ class SpecialtyRepository {
       final Map<String, dynamic> responseBody =
       jsonDecode(response.body); //chuyển phản hồi JSON thành Map
       if (responseBody['errCode'] == 0) {
-        List<dynamic> doctors = responseBody['data']; //lấy danh sách doctor
+        List<dynamic> specialties = responseBody['data']; //lấy danh sách specialties
         return List<Map<String, dynamic>>.from(
-            doctors); //chuyển danh sách doctor thành list các object
+            specialties); //chuyển danh sách specialties thành list các object
       } else {
         throw Exception('Failed to fetch specialties: ${responseBody['message']}');
       }
@@ -86,9 +86,9 @@ class SpecialtyRepository {
   }
 
   //lấy thông tin chi tiết specialty theo id từ API
-  Future<Map<String, dynamic>> getDetailSpecialtyById(int doctorId, String location) async {
+  Future<Map<String, dynamic>> getDetailSpecialtyById(int specialtyId, String location) async {
     final response = await http.get(
-      Uri.parse('$apiUrl/get-detail-specialty-by-id?id=$doctorId&location=$location'),
+      Uri.parse('$apiUrl/get-detail-specialty-by-id?id=$specialtyId&location=$location'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
