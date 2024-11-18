@@ -28,7 +28,7 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
     super.initState();
     _tabs = [
       ManageScheduleTab(doctorId: widget.doctorId),
-      const ManagePatientTab(),
+      ManagePatientTab(doctorId: widget.doctorId,),
       PersonalTab(userId: widget.doctorId)
     ];
   }
@@ -52,7 +52,7 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
         bottomNavigationBar: BottomNavigationBar(
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: 'Manage Schedule'),
-            BottomNavigationBarItem(icon: Icon(Icons.meeting_room), label: 'Manage Patients'),
+            BottomNavigationBarItem(icon: Icon(Icons.meeting_room), label: 'Manage Patient'),
             BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Personal'),
           ],
           currentIndex: _selectedIndex, //chọn tab

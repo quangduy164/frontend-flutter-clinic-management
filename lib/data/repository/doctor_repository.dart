@@ -210,4 +210,29 @@ class DoctorRepository {
     }
   }
 
+  //lấy danh sách patient đặt lịch theo ngày từ API
+  Future<List<Map<String, dynamic>>> getListPatientForDoctorByDate(
+      int doctorId, String date) async {
+    final response = await http.get(
+      Uri.parse('$apiUrl/get-list-patient-for-doctor?doctorId=$doctorId&date=$date'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseBody =
+      jsonDecode(response.body); //chuyển phản hồi JSON thành Map
+      if (responseBody['errCode'] == 0) {
+        List<dynamic> patients = responseBody['data']; //lấy danh sách patient
+        return List<Map<String, dynamic>>.from(
+            patients); //chuyển danh sách patient thành list các object
+      } else {
+        throw Exception('Failed to fetch patients: ${responseBody['message']}');
+      }
+    } else {
+      throw Exception('Failed to fetch patients');
+    }
+  }
+
 }
