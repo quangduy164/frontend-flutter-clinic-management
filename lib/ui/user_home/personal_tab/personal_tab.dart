@@ -1,23 +1,23 @@
 import 'dart:typed_data'; // Sử dụng Uint8List cho ảnh
 
-import 'package:clinic_management/ui/user_home/pesonal_tab/item_section.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../data/repository/user_repository.dart';
+import 'item_section.dart';
 
 
-class PesonalTab extends StatefulWidget {
+class PersonalTab extends StatefulWidget {
   final int userId;
-  const PesonalTab({super.key, required this.userId});
+  const PersonalTab({super.key, required this.userId});
 
   @override
   State<StatefulWidget> createState() {
-    return _PesonalTabState();
+    return _PersonalTabState();
   }
 }
 
-class _PesonalTabState extends State<PesonalTab> {
+class _PersonalTabState extends State<PersonalTab> {
   Uint8List? _imageAvatar; // Dữ liệu ảnh dưới dạng byte
 
   @override

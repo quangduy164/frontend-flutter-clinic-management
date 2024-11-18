@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'home_tab/home_tab.dart';
 import 'notification_tab/notification_tab.dart';
-import 'pesonal_tab/pesonal_tab.dart';
+import 'personal_tab/personal_tab.dart';
 import 'schedule_tab/schedule_tab.dart';
 
 class UserHomePage extends StatefulWidget {
@@ -26,7 +26,7 @@ class _UserHomePageState extends State<UserHomePage> {
     const HomeTab(),
     const NotificationTab(),
     const ScheduleTab(),
-    PesonalTab(userId: widget.userId,),
+    PersonalTab(userId: widget.userId,),
   ];
 
 

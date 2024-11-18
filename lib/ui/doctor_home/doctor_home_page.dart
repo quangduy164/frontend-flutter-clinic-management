@@ -1,7 +1,8 @@
 import 'package:clinic_management/data/blocs/authentication_bloc.dart';
 import 'package:clinic_management/data/events/authentication_event.dart';
-import 'package:clinic_management/ui/doctor_home/manage_clinic_tab/manage_clinic_tab.dart';
+import 'package:clinic_management/ui/doctor_home/manage_patient_tab/manage_patient_tab.dart';
 import 'package:clinic_management/ui/doctor_home/manage_schedule_tab/manage_schedule_tab.dart';
+import 'package:clinic_management/ui/user_home/personal_tab/personal_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -20,10 +21,17 @@ class DoctorHomePage extends StatefulWidget {
 class _DoctorHomePageState extends State<DoctorHomePage> {
   int _selectedIndex = 0; // Chỉ số tab hiện tại
 
-  final List<Widget> _tabs = [
-    const ManageScheduleTab(),
-    const ManageClinicTab()
-  ];
+  late List<Widget> _tabs; // Chỉ định `late` để khởi tạo sau
+
+  @override
+  void initState() {
+    super.initState();
+    _tabs = [
+      ManageScheduleTab(doctorId: widget.doctorId),
+      const ManagePatientTab(),
+      PersonalTab(userId: widget.doctorId)
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +52,8 @@ class _DoctorHomePageState extends State<DoctorHomePage> {
         bottomNavigationBar: BottomNavigationBar(
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: 'Manage Schedule'),
-            BottomNavigationBarItem(icon: Icon(Icons.meeting_room), label: 'Manage Clinics'),
+            BottomNavigationBarItem(icon: Icon(Icons.meeting_room), label: 'Manage Patients'),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Personal'),
           ],
           currentIndex: _selectedIndex, //chọn tab
           onTap: _onItemTapped, //khi nhấn thì setstate

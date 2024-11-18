@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class ManageClinicTab extends StatelessWidget{
-  const ManageClinicTab({super.key});
+class ManagePatientTab extends StatelessWidget{
+  const ManagePatientTab({super.key});
 
   @override
   Widget build(BuildContext context) {
