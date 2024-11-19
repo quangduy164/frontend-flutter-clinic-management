@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:clinic_management/data/repository/doctor_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 class ManagePatientTab extends StatefulWidget {
@@ -16,10 +19,19 @@ class _ManagePatientTabState extends State<ManagePatientTab> {
   List<Map<String, dynamic>> patients = [];//thời gian lịch khám
   bool isLoading = true; // Trạng thái loading
   DateTime? _selectedDate;//biến chọn ngày
+  Uint8List? _image; // Dữ liệu ảnh dưới dạng byte
+  late bool _isChooseImage;//Biến đã chọn ảnh hay chưa
+  String? emailPatient;
+  String? namePatient;
+  String? tokenBooking;//mã lịch hẹn
+  String? timeType;
+  String? genderPatient;
+  String? addressPatient;
 
   @override
   void initState() {
     _selectedDate = DateTime.now();//đặt ngày hiện tại
+    _isChooseImage = false;
     _fetchAllPatientsByDate();
     super.initState();
   }
@@ -82,14 +94,18 @@ class _ManagePatientTabState extends State<ManagePatientTab> {
     }
     return Column(
       children: patients.map((patient) {
-        final name = patient['patientData']['firstName'] ?? '';
-        final timeType = patient['timeTypeDataPatient']['valueVi'] ?? '';
-        final gender = patient['patientData']['genderData']['valueVi'] ?? '';
-        final address = patient['patientData']['address'] ?? '';
+        setState(() {
+          tokenBooking = patient['token'] ?? '';
+          namePatient = patient['patientData']['firstName'] ?? '';
+          emailPatient = patient['patientData']['email'] ?? '';
+          timeType = patient['timeTypeDataPatient']['valueVi'] ?? '';
+          genderPatient = patient['patientData']['genderData']['valueVi'] ?? '';
+          addressPatient = patient['patientData']['address'] ?? '';
+        });
         return Padding(
           padding: const EdgeInsets.only(bottom: 5.0),
           child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
               decoration: BoxDecoration(
                 color: Colors.lightBlueAccent.withOpacity(0.1),
                 border: Border.all(
@@ -97,20 +113,20 @@ class _ManagePatientTabState extends State<ManagePatientTab> {
                   width: 0.1, // Độ dày viền
                 ),
               ),
-              child: patientComponent(name, timeType, gender, address)
+              child: patientComponent()
           )
         );
       }).toList(),
     );
   }
 
-  Widget patientComponent(String name, String timeType, String gender, String address){
+  Widget patientComponent(){
     return Row(
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start, // Căn trái cho text
           children: [
-            Text(name,
+            Text(namePatient!,
               style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 3,),
@@ -118,20 +134,23 @@ class _ManagePatientTabState extends State<ManagePatientTab> {
               style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w400, color: Colors.cyan),
             ),
             const SizedBox(height: 3,),
-            Text(gender,
+            Text(genderPatient!,
               style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: Colors.black54),
             ),
             const SizedBox(height: 3,),
-            Text(address,
+            Text(addressPatient!,
               style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: Colors.black54),
             ),
           ],
         ),
         Expanded(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               TextButton(
-                  onPressed: (){},
+                  onPressed: (){
+                    _confirmPatient(context);
+                  },
                   style: TextButton.styleFrom(
                     padding: const EdgeInsets.all(10), // Khoảng cách bên trong nút
                     backgroundColor: Colors.orangeAccent,
@@ -142,22 +161,98 @@ class _ManagePatientTabState extends State<ManagePatientTab> {
                   ),
                   child: const Text('Xác nhận', style: TextStyle(fontSize: 12, color: Colors.white),)
               ),
-              TextButton(
-                  onPressed: (){},
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.all(10), // Khoảng cách bên trong nút
-                    backgroundColor: Colors.blueAccent,
-                    shape: RoundedRectangleBorder(
-                      side: const BorderSide(color: Colors.grey, width: 1), // Viền cho TextButton
-                      borderRadius: BorderRadius.circular(10), // Bo góc
-                    ),
-                  ),
-                  child: const Text('Gửi hóa đơn', style: TextStyle(fontSize: 12, color: Colors.white))
-              )
             ],
           ),
-        )
+        ),
+        const SizedBox(width: 5,)
       ],
+    );
+  }
+
+  // Hộp thoại xác nhận gửi hóa đơn
+  void _confirmPatient(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: true, // Đóng modal khi nhấn ra ngoài
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15), // Bo góc modal
+              ),
+              title: const Text(
+                'Gửi hóa đơn khám bệnh',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('Email: nguyenvana@gmail.com'),
+                  const SizedBox(height: 5),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      TextButton(
+                        onPressed: () async {
+                          Uint8List? img = await _pickImage(ImageSource.gallery);
+                          if (img != null) {
+                            setState(() {
+                              _image = img;
+                              _isChooseImage = true;
+                            });
+                          }
+                        },
+                        style: TextButton.styleFrom(
+                          shape: const RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.grey, width: 1), // Viền cho TextButton
+                          ),
+                        ),
+                        child: const Text(
+                          'Chọn hóa đơn bệnh nhân',
+                          style: TextStyle(color: Colors.cyan),
+                        ),
+                      ),
+                      Text(
+                        (_isChooseImage) ? 'Đã chọn ảnh' : 'Chưa chọn ảnh',
+                        style: TextStyle(
+                          color: (_isChooseImage) ? Colors.black : Colors.red,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                    ],
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    _sendRemedy();
+                    setState(() {
+                      _image = null;
+                      _isChooseImage = false;
+                    });
+                    Navigator.pop(context); // Đóng modal
+                  },
+                  child: const Text('Xác nhận', style: TextStyle(color: Colors.blue)),
+                ),
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _image = null;
+                      _isChooseImage = false;
+                    });
+                    Navigator.pop(context); // Đóng modal
+                  },
+                  child: const Text('Hủy bỏ', style: TextStyle(color: Colors.red)),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 
@@ -214,6 +309,17 @@ class _ManagePatientTabState extends State<ManagePatientTab> {
     );
   }
 
+  // Hàm mở ImagePicker và trả về ảnh dưới dạng Uint8List
+  Future<Uint8List?> _pickImage(ImageSource source) async {
+    final ImagePicker imagePicker = ImagePicker();
+    XFile? file = await imagePicker.pickImage(source: source);
+    if (file != null) {
+      return await file.readAsBytes(); // Đọc ảnh dưới dạng byte
+    }
+    debugPrint('No Image Selected');
+    return null;
+  }
+
   Future<void> _fetchAllPatientsByDate() async {
     try {
       patients = await DoctorRepository().getListPatientForDoctorByDate(
@@ -235,6 +341,33 @@ class _ManagePatientTabState extends State<ManagePatientTab> {
     return "${date.day.toString().padLeft(2, '0')}/"
         "${date.month.toString().padLeft(2, '0')}/"
         "${date.year}";
+  }
+
+  void _sendRemedy() async {
+    // Gọi API để cập nhật người dùng ở đây
+    try {
+      final result = await DoctorRepository().sendRemedy(
+          widget.doctorId,
+          emailPatient!,
+          namePatient!,
+          _image!,
+          tokenBooking!
+      );
+
+      if (result['success']) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Gửi hóa đơn thành công')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${result['message']}')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
   }
 
   // Làm mới danh sách

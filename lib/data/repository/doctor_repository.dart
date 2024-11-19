@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 
@@ -232,6 +233,40 @@ class DoctorRepository {
       }
     } else {
       throw Exception('Failed to fetch patients');
+    }
+  }
+
+  //xác nhận khám xong và gửi email hóa đơn cho patient
+  Future<Map<String, dynamic>> sendRemedy(
+      int doctorId, String email, String name,
+      Uint8List imageBytes, String token) async {
+    String base64Image = base64Encode(imageBytes); // Mã hóa ảnh thành Base64
+    final response = await http.post(
+      Uri.parse('$apiUrl/send-remedy'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'doctorId': doctorId,
+        'email': email.trim(),
+        'name': name,
+        'image': base64Image,
+        'token': token.trim(),
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      // Xử lý phản hồi từ API
+      //chuyển phản hồi JSON thành Map
+      final Map<String, dynamic> responseBody = jsonDecode(response.body);
+
+      if (responseBody['errCode'] == 0) {
+        return {'success': true, 'message': responseBody['message']};
+      } else {
+        return {'success': false, 'message': responseBody['errMessage']};
+      }
+    } else {
+      throw Exception('Failed to send remedy');
     }
   }
 
