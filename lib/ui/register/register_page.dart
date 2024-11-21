@@ -1,6 +1,5 @@
 import 'package:clinic_management/data/blocs/register_bloc.dart';
 import 'package:clinic_management/data/events/register_event.dart';
-import 'package:clinic_management/data/repository/user_repository.dart';
 import 'package:clinic_management/data/states/register_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -8,10 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 
 class RegisterPage extends StatefulWidget {
-  final UserRepository _userRepository;
-
-  RegisterPage({required UserRepository userRepository})
-      : _userRepository = userRepository;
+  const RegisterPage({super.key});
 
   @override
   _RegisterPageState createState() => _RegisterPageState();
@@ -23,8 +19,6 @@ class _RegisterPageState extends State<RegisterPage>{
   final TextEditingController _firstNameController = TextEditingController();
   String? _selectedGender; //biến chọn giới tính
   late RegisterBloc _registerBloc;
-
-  final UserRepository _userRepository = UserRepository();
 
   @override
   void initState() {
@@ -50,15 +44,14 @@ class _RegisterPageState extends State<RegisterPage>{
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Register'),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.exit_to_app),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+          title: SizedBox(
+            height: 50,
+            width: 150,
+            child: Image.asset(
+              'assets/images/logo.png',
+              fit: BoxFit.contain, // Đảm bảo hình ảnh vừa với kích thước
             ),
-          ],
+          ),
         ),
         body: BlocBuilder<RegisterBloc, RegisterState>(
           builder: (context, registerState){

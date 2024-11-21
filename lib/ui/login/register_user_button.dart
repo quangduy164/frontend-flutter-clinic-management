@@ -25,7 +25,7 @@ class RegisterUserButton extends StatelessWidget {
                     builder: (context){
                       return BlocProvider<RegisterBloc>(
                         create: (context) => RegisterBloc(userRepository: _userRepository),
-                        child: RegisterPage(userRepository: _userRepository,),
+                        child: RegisterPage(),
                       );
                     }
                 )
