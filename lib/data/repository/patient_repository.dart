@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class PatientRepository {
-  final String apiUrl = 'http://192.168.1.23:8080/api'; //URL api
+  final String apiUrl = 'http://192.168.1.38:8080/api'; //URL api
 
   // Lưu thông tin patient qua api
   Future<Map<String, dynamic>> patientBookAppointment(

@@ -1,16 +1,21 @@
-# clinic_management
+## Clinic Management
+The application helps users quickly find clinics and conveniently book appointments. Admins can easily manage users and clinics, while doctors can confirm patient appointments.
 
-A new Flutter project.
+## Features
+- **For Admin:**
+    - Add, edit, and delete user information, doctor information and can schedule appointments for each doctor if necessary.
+    - Add information about clinics and medical specialties.
+- **For Doctor:**
+    - Add doctor's schedule by day
+    - View the list of patients by day
+    - Send invoice to the patient's email
+- **For User:**
+    - Register an account and change your avatar if necessary
+    - View detailed information about medical facilities, specialties, and doctors.
+    - Appointments can be made according to medical facility, specialty or specific doctor
+    - Confirm booking in email
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Build with
+- Frontend: Flutter, Dart
+- Backend: Express, Javascrip (<u>[Link](https://github.com/quangduy164/backend-nodejs-clinic-management)</u>)
+- Database: MySQL

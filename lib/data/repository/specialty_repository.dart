@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 
 class SpecialtyRepository {
-  final String apiUrl = 'http://192.168.1.23:8080/api'; //URL api
+  final String apiUrl = 'http://192.168.1.38:8080/api'; //URL api
 
   // Lưu thông tin specialty qua api
   Future<Map<String, dynamic>> createNewSpecialty(
